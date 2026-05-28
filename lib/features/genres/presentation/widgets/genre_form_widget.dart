@@ -3,6 +3,7 @@ import 'dart:html' as html;
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
@@ -261,7 +262,7 @@ class _GenreFormWidgetState extends State<GenreFormWidget> {
                     vertical: AppSpacing.smMd,
                   ),
                 ),
-                child: const Text('Huỷ'),
+                child: Text(context.translate('ui.common.cancel')),
               ),
               const SizedBox(width: AppSpacing.md),
               ElevatedButton(
@@ -286,7 +287,9 @@ class _GenreFormWidgetState extends State<GenreFormWidget> {
                         ),
                       )
                     : Text(
-                        widget.initialGenre != null ? 'Cập nhật' : 'Tạo mới',
+                        widget.initialGenre != null
+                            ? context.translate('ui.common.update')
+                            : context.translate('ui.common.create'),
                       ),
               ),
             ],
@@ -331,7 +334,7 @@ class _FieldsCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Thông tin thể loại',
+            context.translate('ui.genres.basic_info'),
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: textPrimary,
               fontWeight: FontWeight.w600,
@@ -340,13 +343,13 @@ class _FieldsCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xxl),
           _FormField(
             key: const Key('genreForm_nameField'),
-            label: 'Tên thể loại *',
+            label: context.translate('ui.genres.name_label'),
             controller: nameCtrl,
-            hintText: 'VD: V-Pop',
+            hintText: context.translate('ui.genres.name_hint'),
             textColor: textPrimary,
             borderColor: borderColor,
             validator: (v) =>
-                (v == null || v.trim().isEmpty) ? 'Không được để trống' : null,
+                (v == null || v.trim().isEmpty) ? context.translate('ui.common.not_null') : null,
           ),
           const SizedBox(height: AppSpacing.xl),
           Row(
@@ -378,9 +381,9 @@ class _FieldsCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xl),
           _FormField(
             key: const Key('genreForm_descriptionField'),
-            label: 'Mô tả',
+            label: context.translate('ui.genres.description_label'),
             controller: descriptionCtrl,
-            hintText: 'Mô tả ngắn về thể loại...',
+            hintText: context.translate('ui.genres.description_hint'),
             textColor: textPrimary,
             borderColor: borderColor,
             maxLines: 3,
@@ -434,7 +437,7 @@ class _CoverCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Ảnh bìa',
+            context.translate('ui.genres.cover_label'),
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: textPrimary,
               fontWeight: FontWeight.w600,
@@ -460,7 +463,7 @@ class _CoverCard extends StatelessWidget {
             key: const Key('genreForm_coverPickButton'),
             onPressed: isLoading ? null : onPick,
             icon: const Icon(Icons.upload_outlined, size: 14),
-            label: const Text('Tải ảnh bìa'),
+            label: Text(context.translate('ui.genres.cover_upload')),
             style: OutlinedButton.styleFrom(
               foregroundColor: textSecondary,
               side: BorderSide(color: borderColor),

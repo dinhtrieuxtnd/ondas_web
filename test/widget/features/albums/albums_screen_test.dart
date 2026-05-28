@@ -242,7 +242,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(AlertDialog), findsOneWidget);
-    expect(find.text('Xác nhận xóa'), findsOneWidget);
+    expect(find.text('Confirm delete'), findsOneWidget);
     expect(find.byKey(const Key('deleteDialog_cancelButton')), findsOneWidget);
     expect(find.byKey(const Key('deleteDialog_confirmButton')), findsOneWidget);
   });

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ondas_web/core/constants/app_constants.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
@@ -27,8 +28,8 @@ class _ArtistsScreenState extends State<ArtistsScreen> {
   void initState() {
     super.initState();
     context.read<ArtistBloc>().add(
-          ArtistLoadListEvent(page: _currentPage, size: _pageSize),
-        );
+      ArtistLoadListEvent(page: _currentPage, size: _pageSize),
+    );
   }
 
   @override
@@ -41,33 +42,33 @@ class _ArtistsScreenState extends State<ArtistsScreen> {
     setState(() => _currentPage = 0);
     final trimmed = query.trim();
     context.read<ArtistBloc>().add(
-          ArtistLoadListEvent(
-            page: 0,
-            size: _pageSize,
-            query: trimmed.isEmpty ? null : trimmed,
-          ),
-        );
+      ArtistLoadListEvent(
+        page: 0,
+        size: _pageSize,
+        query: trimmed.isEmpty ? null : trimmed,
+      ),
+    );
   }
 
   void _onPageChanged(int page) {
     setState(() => _currentPage = page);
     context.read<ArtistBloc>().add(
-          ArtistLoadListEvent(
-            page: page,
-            size: _pageSize,
-            query: _searchController.text.trim().isEmpty
-                ? null
-                : _searchController.text.trim(),
-          ),
-        );
+      ArtistLoadListEvent(
+        page: page,
+        size: _pageSize,
+        query: _searchController.text.trim().isEmpty
+            ? null
+            : _searchController.text.trim(),
+      ),
+    );
   }
 
   Future<void> _onAdd() async {
     final result = await context.push<bool>('${AppConstants.routeArtists}/new');
     if (result == true && mounted) {
       context.read<ArtistBloc>().add(
-            ArtistLoadListEvent(page: _currentPage, size: _pageSize),
-          );
+        ArtistLoadListEvent(page: _currentPage, size: _pageSize),
+      );
     }
   }
 
@@ -77,8 +78,8 @@ class _ArtistsScreenState extends State<ArtistsScreen> {
     );
     if (result == true && mounted) {
       context.read<ArtistBloc>().add(
-            ArtistLoadListEvent(page: _currentPage, size: _pageSize),
-          );
+        ArtistLoadListEvent(page: _currentPage, size: _pageSize),
+      );
     }
   }
 
@@ -101,17 +102,17 @@ class _ArtistsScreenState extends State<ArtistsScreen> {
         if (state is ArtistOperationSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(context.translateErrorCode(state.message)),
               backgroundColor: AppColors.successLight,
             ),
           );
           context.read<ArtistBloc>().add(
-                ArtistLoadListEvent(page: _currentPage, size: _pageSize),
-              );
+            ArtistLoadListEvent(page: _currentPage, size: _pageSize),
+          );
         } else if (state is ArtistOperationError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(context.translateErrorCode(state.message)),
               backgroundColor: AppColors.errorLight,
             ),
           );
@@ -155,20 +156,23 @@ class _ArtistsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
     final bgColor = isLight ? AppColors.pureWhite : AppColors.darkBackground;
-    final textPrimary =
-        isLight ? AppColors.nearBlack : AppColors.darkTextPrimary;
-    final textSecondary =
-        isLight ? AppColors.stone : AppColors.darkTextSecondary;
+    final textPrimary = isLight
+        ? AppColors.nearBlack
+        : AppColors.darkTextPrimary;
+    final textSecondary = isLight
+        ? AppColors.stone
+        : AppColors.darkTextSecondary;
     final borderColor = isLight ? AppColors.lightGray : AppColors.darkBorder;
 
     return BlocBuilder<ArtistBloc, ArtistState>(
       builder: (context, state) {
         final artists = state is ArtistListLoaded ? state.artists : <Artist>[];
         final totalPages = state is ArtistListLoaded ? state.totalPages : 1;
-        final totalElements =
-            state is ArtistListLoaded ? state.totalElements : 0;
-        final isLoading = state is ArtistListLoading ||
-            state is ArtistOperationInProgress;
+        final totalElements = state is ArtistListLoaded
+            ? state.totalElements
+            : 0;
+        final isLoading =
+            state is ArtistListLoading || state is ArtistOperationInProgress;
 
         return Container(
           color: bgColor,
@@ -183,10 +187,8 @@ class _ArtistsContent extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Nghệ sĩ',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
+                        context.translate('ui.artists.title'),
+                        style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(
                               color: textPrimary,
                               fontWeight: FontWeight.w600,
@@ -194,7 +196,7 @@ class _ArtistsContent extends StatelessWidget {
                       ),
                       const SizedBox(height: AppSpacing.xxs),
                       Text(
-                        '$totalElements nghệ sĩ',
+                        '$totalElements ${context.translate('ui.artists.title')}',
                         style: TextStyle(fontSize: 13, color: textSecondary),
                       ),
                     ],
@@ -204,7 +206,9 @@ class _ArtistsContent extends StatelessWidget {
                     key: const Key('artistsScreen_addButton'),
                     onPressed: onAdd,
                     icon: const Icon(Icons.add, size: 18),
-                    label: const Text('Thêm nghệ sĩ'),
+                    label: Text(
+                      context.translate('ui.artists.create'),
+                    ),
                   ),
                 ],
               ),
@@ -217,7 +221,9 @@ class _ArtistsContent extends StatelessWidget {
                   controller: searchController,
                   style: TextStyle(fontSize: 14, color: textPrimary),
                   decoration: InputDecoration(
-                    hintText: 'Tìm kiếm nghệ sĩ...',
+                    hintText: context.translate(
+                      'ui.artists.search_hint',
+                    ),
                     prefixIcon: const Icon(Icons.search, size: 18),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppRadius.pill),
@@ -300,7 +306,10 @@ class _PaginationBar extends StatelessWidget {
           color: textSecondary,
         ),
         Text(
-          'Trang ${currentPage + 1} / $totalPages',
+          context.translate('ui.pagination.page', {
+            'current': currentPage + 1,
+            'total': totalPages,
+          }),
           style: TextStyle(fontSize: 13, color: textSecondary),
         ),
         IconButton(
@@ -330,13 +339,15 @@ class _DeleteConfirmDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Xác nhận xóa'),
-      content: Text('Bạn có chắc muốn xóa nghệ sĩ "$artistName"? Hành động này không thể hoàn tác.'),
+      title: Text(context.translate('ui.common.confirm_delete')),
+      content: Text(
+        context.translate('ui.artists.confirm_delete', {'name': artistName}),
+      ),
       actions: [
         TextButton(
           key: const Key('deleteDialog_cancelButton'),
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Hủy'),
+          child: Text(context.translate('ui.common.cancel')),
         ),
         ElevatedButton(
           key: const Key('deleteDialog_confirmButton'),
@@ -348,7 +359,7 @@ class _DeleteConfirmDialog extends StatelessWidget {
             Navigator.of(context).pop();
             onConfirm();
           },
-          child: const Text('Xóa'),
+          child: Text(context.translate('ui.common.delete')),
         ),
       ],
     );

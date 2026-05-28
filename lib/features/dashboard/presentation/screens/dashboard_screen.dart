@@ -5,6 +5,7 @@ import 'package:ondas_web/core/constants/app_constants.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:ondas_web/features/dashboard/presentation/bloc/dashboard_event.dart';
 import 'package:ondas_web/features/dashboard/presentation/bloc/dashboard_state.dart';
@@ -13,10 +14,10 @@ import 'package:ondas_web/features/dashboard/presentation/widgets/dashboard_stat
 // ─── Mock data ────────────────────────────────────────────────────────────────
 
 const _kStats = [
-  _StatData(label: 'Total Songs', value: '1,247', icon: Icons.music_note),
-  _StatData(label: 'Total Artists', value: '89', icon: Icons.person),
-  _StatData(label: 'Total Albums', value: '342', icon: Icons.album),
-  _StatData(label: 'Active Users', value: '12,830', icon: Icons.people),
+  _StatData(labelKey: 'ui.dashboard.stats.songs', value: '1,247', icon: Icons.music_note),
+  _StatData(labelKey: 'ui.dashboard.stats.artists', value: '89', icon: Icons.person),
+  _StatData(labelKey: 'ui.dashboard.stats.albums', value: '342', icon: Icons.album),
+  _StatData(labelKey: 'ui.dashboard.stats.users', value: '12,830', icon: Icons.people),
 ];
 
 const _kRecentSongs = [
@@ -124,7 +125,7 @@ class _TopBar extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            'Dashboard',
+            context.translate('ui.dashboard.title'),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w500,
                 ),
@@ -207,7 +208,7 @@ class _UserDropdown extends StatelessWidget {
             children: [
               const Icon(Icons.logout, size: 16),
               const SizedBox(width: AppSpacing.sm),
-              const Text('Logout'),
+              Text(context.translate('ui.dashboard.logout')),
             ],
           ),
         ),
@@ -297,7 +298,7 @@ class _MainContent extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Overview',
+              context.translate('ui.dashboard.overview'),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
@@ -324,7 +325,7 @@ class _StatCardsRow extends StatelessWidget {
       children: _kStats
           .map(
             (s) => DashboardStatCardWidget(
-              label: s.label,
+              label: context.translate(s.labelKey),
               value: s.value,
               icon: s.icon,
             ),
@@ -356,7 +357,7 @@ class _RecentSongsTable extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(AppSpacing.xxl),
             child: Text(
-              'Recent Songs',
+              context.translate('ui.dashboard.recent_songs'),
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
@@ -373,7 +374,7 @@ class _RecentSongsTable extends StatelessWidget {
               columns: [
                 DataColumn(
                   label: Text(
-                    'TITLE',
+                    context.translate('ui.dashboard.table.title'),
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: headerColor,
                           fontWeight: FontWeight.w500,
@@ -383,7 +384,7 @@ class _RecentSongsTable extends StatelessWidget {
                 ),
                 DataColumn(
                   label: Text(
-                    'ARTIST',
+                    context.translate('ui.dashboard.table.artist'),
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: headerColor,
                           fontWeight: FontWeight.w500,
@@ -393,7 +394,7 @@ class _RecentSongsTable extends StatelessWidget {
                 ),
                 DataColumn(
                   label: Text(
-                    'GENRE',
+                    context.translate('ui.dashboard.table.genre'),
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: headerColor,
                           fontWeight: FontWeight.w500,
@@ -403,7 +404,7 @@ class _RecentSongsTable extends StatelessWidget {
                 ),
                 DataColumn(
                   label: Text(
-                    'PLAYS',
+                    context.translate('ui.dashboard.table.plays'),
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: headerColor,
                           fontWeight: FontWeight.w500,
@@ -414,7 +415,7 @@ class _RecentSongsTable extends StatelessWidget {
                 ),
                 DataColumn(
                   label: Text(
-                    'DATE ADDED',
+                    context.translate('ui.dashboard.table.date_added'),
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: headerColor,
                           fontWeight: FontWeight.w500,
@@ -480,11 +481,11 @@ class _GenreChip extends StatelessWidget {
 // ─── Data classes ─────────────────────────────────────────────────────────────
 
 class _StatData {
-  final String label;
+  final String labelKey;
   final String value;
   final IconData icon;
 
-  const _StatData({required this.label, required this.value, required this.icon});
+  const _StatData({required this.labelKey, required this.value, required this.icon});
 }
 
 class _SongRow {

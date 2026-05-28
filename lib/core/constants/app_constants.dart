@@ -12,6 +12,7 @@ abstract class AppConstants {
   static const String userRoleKey = 'user_role';
   static const String userDisplayNameKey = 'user_display_name';
   static const String userEmailKey = 'user_email';
+  static const String languageCodeKey = 'language_code';
 
   // Roles
   static const String roleAdmin = 'ADMIN';

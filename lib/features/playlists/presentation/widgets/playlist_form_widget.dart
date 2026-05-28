@@ -3,6 +3,7 @@ import 'dart:html' as html;
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
@@ -124,7 +125,7 @@ class _PlaylistFormWidgetState extends State<PlaylistFormWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Thông tin Playlist',
+                    context.translate('ui.playlists.basic_info'),
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       color: textPrimary,
                       fontWeight: FontWeight.w600,
@@ -133,12 +134,12 @@ class _PlaylistFormWidgetState extends State<PlaylistFormWidget> {
                   const SizedBox(height: AppSpacing.xxl),
                   _PlaylistTextField(
                     controller: _nameCtrl,
-                    label: 'Tên playlist *',
-                    hintText: 'VD: Top hits',
+                    label: context.translate('ui.playlists.name_label'),
+                    hintText: context.translate('ui.playlists.name_hint'),
                     textColor: textPrimary,
                     borderColor: borderColor,
                     validator: (value) => value == null || value.trim().isEmpty
-                        ? 'Không được để trống'
+                        ? context.translate('ui.common.not_null')
                         : null,
                   ),
                   const SizedBox(height: AppSpacing.xl),
@@ -155,7 +156,7 @@ class _PlaylistFormWidgetState extends State<PlaylistFormWidget> {
                         onPressed: widget.isLoading
                             ? null
                             : () => Navigator.of(context).pop(),
-                        child: const Text('Hủy'),
+                        child: Text(context.translate('ui.common.cancel')),
                       ),
                       const SizedBox(width: AppSpacing.md),
                       ElevatedButton(
@@ -170,8 +171,8 @@ class _PlaylistFormWidgetState extends State<PlaylistFormWidget> {
                               )
                             : Text(
                                 widget.initialPlaylist == null
-                                    ? 'Tạo mới'
-                                    : 'Cập nhật',
+                                    ? context.translate('ui.common.create')
+                                    : context.translate('ui.common.update'),
                               ),
                       ),
                     ],
@@ -194,7 +195,7 @@ class _PlaylistFormWidgetState extends State<PlaylistFormWidget> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Cover',
+                    context.translate('ui.playlists.cover_label'),
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       color: textPrimary,
                       fontWeight: FontWeight.w600,
@@ -228,7 +229,7 @@ class _PlaylistFormWidgetState extends State<PlaylistFormWidget> {
                   OutlinedButton.icon(
                     onPressed: widget.isLoading ? null : _pickCover,
                     icon: const Icon(Icons.upload_outlined, size: 16),
-                    label: const Text('Tải ảnh'),
+                    label: Text(context.translate('ui.playlists.cover_upload')),
                   ),
                   if (_coverFileName != null) ...[
                     const SizedBox(height: AppSpacing.xs),
@@ -325,9 +326,9 @@ class _DescriptionField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Mô tả',
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+        Text(
+          context.translate('ui.playlists.description_label'),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: AppSpacing.xs),
         TextFormField(
@@ -335,7 +336,7 @@ class _DescriptionField extends StatelessWidget {
           maxLines: 3,
           style: TextStyle(fontSize: 14, color: textColor),
           decoration: InputDecoration(
-            hintText: 'Mô tả về playlist...',
+            hintText: context.translate('ui.playlists.description_hint'),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.lg,
               vertical: AppSpacing.smMd,

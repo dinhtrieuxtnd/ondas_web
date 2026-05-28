@@ -5,6 +5,7 @@ import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_semantic_colors.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
 import 'package:ondas_web/core/theme/app_typography.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/utils/validators.dart';
 import 'package:ondas_web/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ondas_web/features/auth/presentation/bloc/auth_event.dart';
@@ -47,7 +48,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
       builder: (context, state) {
         final isLoading = state is AuthLoading;
         final errorMessage =
-            state is AuthFailure ? state.message : null;
+          state is AuthFailure ? context.translateErrorCode(state.message) : null;
         final semanticColors =
             Theme.of(context).extension<AppSemanticColors>();
 
@@ -66,7 +67,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
               _PillTextField(
                 key: const Key('loginForm_emailField'),
                 controller: _emailController,
-                label: 'Email',
+                label: context.translate('ui.auth.email_label'),
                 keyboardType: TextInputType.emailAddress,
                 enabled: !isLoading,
                 validator: Validators.email,
@@ -75,7 +76,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
               _PillTextField(
                 key: const Key('loginForm_passwordField'),
                 controller: _passwordController,
-                label: 'Mật khẩu',
+                label: context.translate('ui.auth.password_label'),
                 obscureText: _obscurePassword,
                 enabled: !isLoading,
                 validator: Validators.password,
@@ -258,7 +259,7 @@ class _SubmitButton extends StatelessWidget {
                 ),
               )
             : Text(
-                'Đăng nhập',
+                context.translate('ui.auth.login_button'),
                 style: AppTypography.body.copyWith(
                   color: AppColors.pureWhite,
                   fontWeight: FontWeight.w500,

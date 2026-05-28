@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ondas_web/core/constants/app_constants.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
 import 'package:ondas_web/features/playlists/domain/entities/playlist.dart';
@@ -79,7 +80,9 @@ class _PlaylistFormScreenState extends State<PlaylistFormScreen> {
         if (state is PlaylistDetailLoaded && state.snackbarMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.snackbarMessage!),
+              content: Text(
+                context.translateErrorCode(state.snackbarMessage!),
+              ),
               backgroundColor: AppColors.errorLight,
             ),
           );
@@ -88,7 +91,7 @@ class _PlaylistFormScreenState extends State<PlaylistFormScreen> {
           if (createdId != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.message),
+                content: Text(context.translateErrorCode(state.message)),
                 backgroundColor: AppColors.successLight,
               ),
             );
@@ -97,7 +100,7 @@ class _PlaylistFormScreenState extends State<PlaylistFormScreen> {
           }
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(context.translateErrorCode(state.message)),
               backgroundColor: AppColors.successLight,
             ),
           );
@@ -105,7 +108,7 @@ class _PlaylistFormScreenState extends State<PlaylistFormScreen> {
         } else if (state is PlaylistOperationError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(context.translateErrorCode(state.message)),
               backgroundColor: AppColors.errorLight,
             ),
           );
@@ -141,7 +144,9 @@ class _PlaylistFormScreenState extends State<PlaylistFormScreen> {
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       Text(
-                        widget.isEditing ? 'Sửa Playlist' : 'Thêm Playlist',
+                        widget.isEditing
+                            ? context.translate('ui.playlists.edit')
+                            : context.translate('ui.playlists.create'),
                         style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(
                               color: textPrimary,

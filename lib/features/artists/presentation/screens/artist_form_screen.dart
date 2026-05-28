@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
 import 'package:ondas_web/features/artists/domain/entities/artist.dart';
@@ -25,9 +26,9 @@ class _ArtistFormScreenState extends State<ArtistFormScreen> {
   void initState() {
     super.initState();
     if (widget.isEditing) {
-      context
-          .read<ArtistBloc>()
-          .add(ArtistLoadDetailEvent(id: widget.artistId!));
+      context.read<ArtistBloc>().add(
+        ArtistLoadDetailEvent(id: widget.artistId!),
+      );
     }
   }
 
@@ -41,27 +42,27 @@ class _ArtistFormScreenState extends State<ArtistFormScreen> {
   }) {
     if (widget.isEditing) {
       context.read<ArtistBloc>().add(
-            ArtistUpdateEvent(
-              id: widget.artistId!,
-              name: name,
-              slug: slug,
-              bio: bio,
-              country: country,
-              avatarBytes: avatarBytes,
-              avatarFileName: avatarFileName,
-            ),
-          );
+        ArtistUpdateEvent(
+          id: widget.artistId!,
+          name: name,
+          slug: slug,
+          bio: bio,
+          country: country,
+          avatarBytes: avatarBytes,
+          avatarFileName: avatarFileName,
+        ),
+      );
     } else {
       context.read<ArtistBloc>().add(
-            ArtistCreateEvent(
-              name: name,
-              slug: slug,
-              bio: bio,
-              country: country,
-              avatarBytes: avatarBytes,
-              avatarFileName: avatarFileName,
-            ),
-          );
+        ArtistCreateEvent(
+          name: name,
+          slug: slug,
+          bio: bio,
+          country: country,
+          avatarBytes: avatarBytes,
+          avatarFileName: avatarFileName,
+        ),
+      );
     }
   }
 
@@ -69,15 +70,16 @@ class _ArtistFormScreenState extends State<ArtistFormScreen> {
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
     final bgColor = isLight ? AppColors.pureWhite : AppColors.darkBackground;
-    final textPrimary =
-        isLight ? AppColors.nearBlack : AppColors.darkTextPrimary;
+    final textPrimary = isLight
+        ? AppColors.nearBlack
+        : AppColors.darkTextPrimary;
 
     return BlocListener<ArtistBloc, ArtistState>(
       listener: (context, state) {
         if (state is ArtistOperationSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(context.translateErrorCode(state.message)),
               backgroundColor: AppColors.successLight,
             ),
           );
@@ -85,7 +87,7 @@ class _ArtistFormScreenState extends State<ArtistFormScreen> {
         } else if (state is ArtistOperationError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(context.translateErrorCode(state.message)),
               backgroundColor: AppColors.errorLight,
             ),
           );
@@ -119,10 +121,10 @@ class _ArtistFormScreenState extends State<ArtistFormScreen> {
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       Text(
-                        widget.isEditing ? 'Chỉnh sửa nghệ sĩ' : 'Thêm nghệ sĩ mới',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
+                        widget.isEditing
+                            ? context.translate('ui.artists.edit')
+                            : context.translate('ui.artists.create'),
+                        style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(
                               color: textPrimary,
                               fontWeight: FontWeight.w600,

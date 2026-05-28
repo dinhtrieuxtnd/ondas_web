@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ondas_web/core/constants/app_constants.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
@@ -96,7 +97,7 @@ class _GenresScreenState extends State<GenresScreen> {
         if (state is GenreOperationSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(context.translateErrorCode(state.message)),
               backgroundColor: AppColors.successLight,
             ),
           );
@@ -104,7 +105,7 @@ class _GenresScreenState extends State<GenresScreen> {
         } else if (state is GenreOperationError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(context.translateErrorCode(state.message)),
               backgroundColor: AppColors.errorLight,
             ),
           );
@@ -176,7 +177,7 @@ class _GenresContent extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Thể loại',
+                        context.translate('ui.genres.title'),
                         style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(
                               color: textPrimary,
@@ -196,7 +197,7 @@ class _GenresContent extends StatelessWidget {
                               : AppColors.darkSurface,
                         ),
                         child: Text(
-                          '$totalElements thể loại',
+                          context.translate('ui.genres.count', {'count': totalElements}),
                           style: TextStyle(fontSize: 12, color: textSecondary),
                         ),
                       ),
@@ -207,7 +208,7 @@ class _GenresContent extends StatelessWidget {
                     key: const Key('genresScreen_addButton'),
                     onPressed: onAdd,
                     icon: const Icon(Icons.add, size: 18),
-                    label: const Text('Thêm thể loại'),
+                    label: Text(context.translate('ui.genres.create')),
                   ),
                 ],
               ),
@@ -219,7 +220,7 @@ class _GenresContent extends StatelessWidget {
                   controller: searchController,
                   style: TextStyle(fontSize: 14, color: textPrimary),
                   decoration: InputDecoration(
-                    hintText: 'Tìm kiếm thể loại...',
+                    hintText: context.translate('ui.genres.search_hint'),
                     prefixIcon: const Icon(Icons.search, size: 18),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppRadius.pill),
@@ -293,7 +294,10 @@ class _PaginationBar extends StatelessWidget {
           color: textSecondary,
         ),
         Text(
-          'Trang ${currentPage + 1} / $totalPages',
+          context.translate('ui.pagination.page', {
+            'current': currentPage + 1,
+            'total': totalPages,
+          }),
           style: TextStyle(fontSize: 13, color: textSecondary),
         ),
         IconButton(
@@ -321,13 +325,15 @@ class _DeleteConfirmDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Xac nhan xoa'),
-      content: Text('Ban co chac muon xoa the loai "$genreName"?'),
+      title: Text(context.translate('ui.common.confirm_delete')),
+      content: Text(
+        context.translate('ui.genres.delete_message', {'name': genreName}),
+      ),
       actions: [
         TextButton(
           key: const Key('deleteDialog_cancelButton'),
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Huy'),
+          child: Text(context.translate('ui.common.cancel')),
         ),
         ElevatedButton(
           key: const Key('deleteDialog_confirmButton'),
@@ -339,7 +345,7 @@ class _DeleteConfirmDialog extends StatelessWidget {
             Navigator.of(context).pop();
             onConfirm();
           },
-          child: const Text('Xoa'),
+          child: Text(context.translate('ui.common.delete')),
         ),
       ],
     );

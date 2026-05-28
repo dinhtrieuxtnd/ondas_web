@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
@@ -33,7 +34,7 @@ class GenreTableWidget extends StatelessWidget {
     if (genres.isEmpty) {
       return Center(
         child: Text(
-          'Không có thể loại nào.',
+          context.translate('ui.genres.empty'),
           style: Theme.of(
             context,
           ).textTheme.bodyMedium?.copyWith(color: textSecondary),
@@ -104,14 +105,14 @@ class _GenreCard extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.xxs),
                 Text(
-                  genre.slug ?? 'Khong co slug',
+                  genre.slug ?? context.translate('ui.common.no_slug'),
                   style: Theme.of(
                     context,
                   ).textTheme.bodySmall?.copyWith(color: textSecondary),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
-                  genre.description ?? 'Khong co mo ta',
+                  genre.description ?? context.translate('ui.common.no_description'),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(
@@ -128,14 +129,14 @@ class _GenreCard extends StatelessWidget {
                 key: Key('genreTable_editButton_${genre.id}'),
                 onPressed: () => onEdit(genre),
                 icon: const Icon(Icons.edit_outlined, size: 16),
-                label: const Text('Sửa'),
+                label: Text(context.translate('ui.common.edit')),
               ),
               const SizedBox(height: AppSpacing.xs),
               OutlinedButton.icon(
                 key: Key('genreTable_deleteButton_${genre.id}'),
                 onPressed: () => onDelete(genre),
                 icon: const Icon(Icons.delete_outline, size: 16),
-                label: const Text('Xóa'),
+                label: Text(context.translate('ui.common.delete')),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.errorLight,
                   side: const BorderSide(color: AppColors.errorLight),

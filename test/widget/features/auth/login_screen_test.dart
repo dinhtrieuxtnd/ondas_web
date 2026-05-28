@@ -57,8 +57,8 @@ void main() {
       expect(find.byKey(const Key('loginForm_emailField')), findsOneWidget);
       expect(find.byKey(const Key('loginForm_passwordField')), findsOneWidget);
       expect(find.byKey(const Key('loginForm_submitButton')), findsOneWidget);
-      // Both the screen heading and button label say 'Đăng nhập'
-      expect(find.text('Đăng nhập'), findsNWidgets(2));
+      // Both the screen heading and button label say 'Sign In'
+      expect(find.text('Sign In'), findsNWidgets(2));
     });
 
     testWidgets('shows loading indicator when state is AuthLoading',
@@ -67,11 +67,11 @@ void main() {
       await tester.pumpWidget(buildSubject());
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      // The screen heading 'Đăng nhập' is still visible; only the button label is gone
+      // The screen heading 'Sign In' is still visible; only the button label is gone
       expect(
         find.descendant(
           of: find.byKey(const Key('loginForm_submitButton')),
-          matching: find.text('Đăng nhập'),
+          matching: find.text('Sign In'),
         ),
         findsNothing,
       );

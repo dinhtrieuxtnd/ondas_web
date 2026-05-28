@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
@@ -32,7 +33,7 @@ class TagTableWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.container),
         ),
         padding: const EdgeInsets.all(AppSpacing.xxl),
-        child: const Center(child: Text('Chưa có tag nào')),
+        child: Center(child: Text(context.translate('ui.tags.empty'))),
       );
     }
 
@@ -54,18 +55,18 @@ class TagTableWidget extends StatelessWidget {
               child: Row(
                 children: [
                   const SizedBox(width: 40),
-                  const Expanded(child: Text('Tag')),
+                  Expanded(child: Text(context.translate('ui.tags.column_tag'))),
                   SizedBox(
                     width: 160,
                     child: Text(
-                      'Type',
+                      context.translate('ui.tags.column_type'),
                       style: TextStyle(color: textSecondary),
                     ),
                   ),
                   SizedBox(
                     width: 140,
                     child: Text(
-                      'Color',
+                      context.translate('ui.tags.column_color'),
                       style: TextStyle(color: textSecondary),
                     ),
                   ),
@@ -124,12 +125,12 @@ class TagTableWidget extends StatelessWidget {
                           spacing: AppSpacing.xs,
                           children: [
                             IconButton(
-                              tooltip: 'Sửa',
+                              tooltip: context.translate('ui.common.edit'),
                               icon: const Icon(Icons.edit_outlined),
                               onPressed: () => onEdit(tag),
                             ),
                             IconButton(
-                              tooltip: 'Xóa',
+                              tooltip: context.translate('ui.common.delete'),
                               icon: const Icon(Icons.delete_outline),
                               onPressed: () => onDelete(tag),
                             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ondas_web/core/constants/app_constants.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
@@ -38,23 +39,23 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
   void _load() {
     final query = _searchController.text.trim();
     context.read<AlbumBloc>().add(
-          AlbumLoadListEvent(
-            page: _currentPage,
-            size: _pageSize,
-            query: query.isEmpty ? null : query,
-          ),
-        );
+      AlbumLoadListEvent(
+        page: _currentPage,
+        size: _pageSize,
+        query: query.isEmpty ? null : query,
+      ),
+    );
   }
 
   void _onSearch(String query) {
     setState(() => _currentPage = 0);
     context.read<AlbumBloc>().add(
-          AlbumLoadListEvent(
-            page: 0,
-            size: _pageSize,
-            query: query.trim().isEmpty ? null : query.trim(),
-          ),
-        );
+      AlbumLoadListEvent(
+        page: 0,
+        size: _pageSize,
+        query: query.trim().isEmpty ? null : query.trim(),
+      ),
+    );
   }
 
   void _onPageChanged(int page) {
@@ -92,7 +93,7 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
         if (state is AlbumOperationSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(context.translateErrorCode(state.message)),
               backgroundColor: AppColors.successLight,
             ),
           );
@@ -100,7 +101,7 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
         } else if (state is AlbumOperationError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(context.translateErrorCode(state.message)),
               backgroundColor: AppColors.errorLight,
             ),
           );
@@ -144,19 +145,21 @@ class _AlbumsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
     final bgColor = isLight ? AppColors.pureWhite : AppColors.darkBackground;
-    final textPrimary =
-        isLight ? AppColors.nearBlack : AppColors.darkTextPrimary;
-    final textSecondary =
-        isLight ? AppColors.stone : AppColors.darkTextSecondary;
+    final textPrimary = isLight
+        ? AppColors.nearBlack
+        : AppColors.darkTextPrimary;
+    final textSecondary = isLight
+        ? AppColors.stone
+        : AppColors.darkTextSecondary;
     final borderColor = isLight ? AppColors.lightGray : AppColors.darkBorder;
 
     return BlocBuilder<AlbumBloc, AlbumState>(
       builder: (context, state) {
-        final albums =
-            state is AlbumListLoaded ? state.albums : <Album>[];
+        final albums = state is AlbumListLoaded ? state.albums : <Album>[];
         final totalPages = state is AlbumListLoaded ? state.totalPages : 1;
-        final totalElements =
-            state is AlbumListLoaded ? state.totalElements : 0;
+        final totalElements = state is AlbumListLoaded
+            ? state.totalElements
+            : 0;
         final isLoading =
             state is AlbumListLoading || state is AlbumOperationInProgress;
 
@@ -174,9 +177,7 @@ class _AlbumsContent extends StatelessWidget {
                     children: [
                       Text(
                         'Albums',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
+                        style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(
                               color: textPrimary,
                               fontWeight: FontWeight.w700,
@@ -189,16 +190,14 @@ class _AlbumsContent extends StatelessWidget {
                           vertical: AppSpacing.xs,
                         ),
                         decoration: BoxDecoration(
-                          borderRadius:
-                              BorderRadius.circular(AppRadius.pill),
+                          borderRadius: BorderRadius.circular(AppRadius.pill),
                           color: isLight
                               ? AppColors.snow
                               : AppColors.darkSurface,
                         ),
                         child: Text(
                           '$totalElements album',
-                          style:
-                              TextStyle(fontSize: 12, color: textSecondary),
+                          style: TextStyle(fontSize: 12, color: textSecondary),
                         ),
                       ),
                     ],
@@ -208,7 +207,7 @@ class _AlbumsContent extends StatelessWidget {
                     key: const Key('albumsScreen_addButton'),
                     onPressed: onAdd,
                     icon: const Icon(Icons.add, size: 18),
-                    label: const Text('Thêm album'),
+                    label: Text(context.translate('ui.albums.create')),
                   ),
                 ],
               ),
@@ -223,7 +222,9 @@ class _AlbumsContent extends StatelessWidget {
                   controller: searchController,
                   style: TextStyle(fontSize: 14, color: textPrimary),
                   decoration: InputDecoration(
-                    hintText: 'Tìm kiếm album...',
+                    hintText: context.translate(
+                      'ui.albums.search_hint',
+                    ),
                     prefixIcon: const Icon(Icons.search, size: 18),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppRadius.pill),
@@ -298,12 +299,16 @@ class _PaginationBar extends StatelessWidget {
         IconButton(
           key: const Key('albumsScreen_prevPageButton'),
           icon: const Icon(Icons.chevron_left),
-          onPressed:
-              currentPage > 0 ? () => onPageChanged(currentPage - 1) : null,
+          onPressed: currentPage > 0
+              ? () => onPageChanged(currentPage - 1)
+              : null,
           color: textSecondary,
         ),
         Text(
-          'Trang ${currentPage + 1} / $totalPages',
+          context.translate('ui.pagination.page', {
+            'current': currentPage + 1,
+            'total': totalPages,
+          }),
           style: TextStyle(fontSize: 13, color: textSecondary),
         ),
         IconButton(
@@ -333,14 +338,15 @@ class _DeleteConfirmDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Xác nhận xóa'),
+      title: Text(context.translate('ui.albums.delete_title')),
       content: Text(
-          'Bạn có chắc muốn xóa album "$albumTitle"? Hành động này không thể hoàn tác.'),
+        context.translate('ui.albums.delete_message', {'name': albumTitle}),
+      ),
       actions: [
         TextButton(
           key: const Key('deleteDialog_cancelButton'),
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Hủy'),
+          child: Text(context.translate('ui.common.cancel')),
         ),
         ElevatedButton(
           key: const Key('deleteDialog_confirmButton'),
@@ -352,7 +358,7 @@ class _DeleteConfirmDialog extends StatelessWidget {
             Navigator.of(context).pop();
             onConfirm();
           },
-          child: const Text('Xóa'),
+          child: Text(context.translate('ui.common.delete')),
         ),
       ],
     );

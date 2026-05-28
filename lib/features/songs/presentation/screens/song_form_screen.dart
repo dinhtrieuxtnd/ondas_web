@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ondas_web/core/constants/api_constants.dart';
 import 'package:ondas_web/core/di/injection.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/network/dio_client.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
@@ -134,6 +135,7 @@ class _SongFormScreenState extends State<SongFormScreen> {
     );
 
     final albums = await _loadAlbumOptions(
+      context,
       onError: (message) {
         error ??= message;
       },
@@ -193,7 +195,8 @@ class _SongFormScreenState extends State<SongFormScreen> {
     });
   }
 
-  Future<List<SongFormOption<String>>> _loadAlbumOptions({
+  Future<List<SongFormOption<String>>> _loadAlbumOptions(
+    BuildContext context, {
     required void Function(String message) onError,
   }) async {
     try {
@@ -203,7 +206,7 @@ class _SongFormScreenState extends State<SongFormScreen> {
       );
       final body = response.data as Map<String, dynamic>;
       if (body['success'] != true) {
-        onError(body['message'] as String? ?? 'Không thể tải danh sách albums');
+        onError(body['message'] as String? ?? context.translate('ui.songs.error.load_albums'));
         return const <SongFormOption<String>>[];
       }
 
@@ -220,7 +223,7 @@ class _SongFormScreenState extends State<SongFormScreen> {
           .where((item) => item.value.isNotEmpty)
           .toList();
     } catch (_) {
-      onError('Không thể tải danh sách albums');
+      onError(context.translate('ui.songs.error.load_albums'));
       return const <SongFormOption<String>>[];
     }
   }
@@ -310,7 +313,8 @@ class _SongFormScreenState extends State<SongFormScreen> {
                   setState(() {
                     _awaitingLyricsCreate = true;
                   });
-                  _pendingSongSuccessMessage = state.message;
+                    _pendingSongSuccessMessage =
+                      context.translateErrorCode(state.message);
                   context.read<LyricsBloc>().add(
                     LyricsCreateEvent(
                       songId: state.song!.id,
@@ -324,7 +328,7 @@ class _SongFormScreenState extends State<SongFormScreen> {
               }
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(state.message),
+                  content: Text(context.translateErrorCode(state.message)),
                   backgroundColor: AppColors.successLight,
                 ),
               );
@@ -332,7 +336,7 @@ class _SongFormScreenState extends State<SongFormScreen> {
             } else if (state is SongOperationError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(state.message),
+                  content: Text(context.translateErrorCode(state.message)),
                   backgroundColor: AppColors.errorLight,
                 ),
               );
@@ -355,7 +359,7 @@ class _SongFormScreenState extends State<SongFormScreen> {
                 _awaitingLyricsCreate = false;
                 _pendingLyricsDraft = null;
                 final message = _pendingSongSuccessMessage ??
-                    'Bai hat da duoc tao thanh cong.';
+                    context.translate('ui.songs.success.create_song');
                 _pendingSongSuccessMessage = null;
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -367,8 +371,8 @@ class _SongFormScreenState extends State<SongFormScreen> {
                 return;
               }
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Đã lưu lyrics.'),
+                SnackBar(
+                  content: Text(context.translate('ui.lyrics.save_success')),
                   backgroundColor: AppColors.successLight,
                 ),
               );
@@ -377,8 +381,8 @@ class _SongFormScreenState extends State<SongFormScreen> {
               _prefilledSyncedLines = null;
               _prefilledPlainText = null;
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Đã xoá lyrics.'),
+                SnackBar(
+                  content: Text(context.translate('ui.lyrics.delete_success')),
                   backgroundColor: AppColors.successLight,
                 ),
               );
@@ -387,12 +391,15 @@ class _SongFormScreenState extends State<SongFormScreen> {
                 _awaitingLyricsCreate = false;
                 _pendingLyricsDraft = null;
                 final baseMessage = _pendingSongSuccessMessage ??
-                    'Bai hat da duoc tao thanh cong.';
+                    context.translate('ui.songs.success.create_song');
                 _pendingSongSuccessMessage = null;
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                      '$baseMessage Nhung tao lyrics that bai: ${state.message}',
+                      context.translate('ui.songs.success.create_song_lyrics_failed', {
+                        'message': baseMessage,
+                        'error': context.translateErrorCode(state.message),
+                      }),
                     ),
                     backgroundColor: AppColors.errorLight,
                   ),
@@ -402,7 +409,11 @@ class _SongFormScreenState extends State<SongFormScreen> {
               }
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Lỗi lyrics: ${state.message}'),
+                  content: Text(
+                    context.translate('ui.songs.error.lyrics_error', {
+                      'error': context.translateErrorCode(state.message),
+                    }),
+                  ),
                   backgroundColor: AppColors.errorLight,
                 ),
               );
@@ -445,8 +456,8 @@ class _SongFormScreenState extends State<SongFormScreen> {
                       const SizedBox(width: AppSpacing.sm),
                       Text(
                         widget.isEditing
-                            ? 'Chỉnh sửa bài hát'
-                            : 'Thêm bài hát mới',
+                            ? context.translate('ui.songs.edit')
+                            : context.translate('ui.songs.create'),
                         style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(
                               color: textPrimary,
@@ -506,15 +517,19 @@ class _SongFormScreenState extends State<SongFormScreen> {
                 children: [
                   const Icon(Icons.error_outline, color: Colors.red, size: 48),
                   const SizedBox(height: AppSpacing.sm),
-                  Text('Lỗi: ${state.message}',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyLarge
-                          ?.copyWith(color: Colors.red)),
+                  Text(
+                    context.translate('ui.songs.error.load_failed', {
+                      'error': context.translateErrorCode(state.message),
+                    }),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.copyWith(color: Colors.red),
+                  ),
                   const SizedBox(height: AppSpacing.md),
                   ElevatedButton(
                     onPressed: _loadLyrics,
-                    child: const Text('Thử lại'),
+                    child: Text(context.translate('ui.common.retry')),
                   ),
                 ],
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
@@ -38,7 +39,7 @@ class AdminUserTableWidget extends StatelessWidget {
     if (users.isEmpty) {
       return Center(
         child: Text(
-          'Không có người dùng nào.',
+          context.translate('ui.users.empty'),
           style: Theme.of(
             context,
           ).textTheme.bodyMedium?.copyWith(color: textSecondary),
@@ -63,7 +64,7 @@ class AdminUserTableWidget extends StatelessWidget {
           6: FixedColumnWidth(90),
         },
         children: [
-          _buildHeader(headerColor, borderColor, textSecondary),
+          _buildHeader(context, headerColor, borderColor, textSecondary),
           ...users.asMap().entries.map(
             (entry) => _buildRow(
               context,
@@ -81,6 +82,7 @@ class AdminUserTableWidget extends StatelessWidget {
   }
 
   TableRow _buildHeader(
+    BuildContext context,
     Color headerColor,
     Color borderColor,
     Color textSecondary,
@@ -92,12 +94,12 @@ class AdminUserTableWidget extends StatelessWidget {
       ),
       children: [
         _headerCell('', textSecondary),
-        _headerCell('Người dùng', textSecondary),
-        _headerCell('Vai trò', textSecondary),
-        _headerCell('Trạng thái', textSecondary),
-        _headerCell('Đăng nhập gần', textSecondary),
-        _headerCell('Tạo lúc', textSecondary),
-        _headerCell('Hành động', textSecondary),
+        _headerCell(context.translate('ui.users.column_user'), textSecondary),
+        _headerCell(context.translate('ui.users.column_role'), textSecondary),
+        _headerCell(context.translate('ui.users.column_status'), textSecondary),
+        _headerCell(context.translate('ui.users.column_last_login'), textSecondary),
+        _headerCell(context.translate('ui.users.column_created_at'), textSecondary),
+        _headerCell(context.translate('ui.users.column_actions'), textSecondary),
       ],
     );
   }
@@ -163,7 +165,7 @@ class AdminUserTableWidget extends StatelessWidget {
             vertical: AppSpacing.smMd,
           ),
           child: Text(
-            _roleLabel(user.role),
+            _roleLabel(context, user.role),
             style: TextStyle(fontSize: 13, color: textSecondary),
           ),
         ),
@@ -202,7 +204,7 @@ class AdminUserTableWidget extends StatelessWidget {
           child: IconButton(
             key: Key('adminUserTable_viewButton_${user.id}'),
             icon: const Icon(Icons.open_in_new, size: 18),
-            tooltip: 'Chi tiết',
+            tooltip: context.translate('ui.users.tooltip_details'),
             onPressed: () => onView(user),
             color: textSecondary,
             visualDensity: VisualDensity.compact,
@@ -218,14 +220,14 @@ class AdminUserTableWidget extends StatelessWidget {
     return DateFormatter.formatDateTime(parsed);
   }
 
-  String _roleLabel(String? role) {
+  String _roleLabel(BuildContext context, String? role) {
     switch (role) {
       case 'ADMIN':
-        return 'Quản trị';
+        return context.translate('ui.users.role_admin');
       case 'CONTENT_MANAGER':
-        return 'Quản lý nội dung';
+        return context.translate('ui.users.role_content_manager');
       case 'USER':
-        return 'Người dùng';
+        return context.translate('ui.users.role_user');
       default:
         return role ?? '—';
     }
@@ -311,7 +313,9 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final labelText = active ? 'Hoạt động' : 'Bị khóa';
+    final labelText = active
+        ? context.translate('ui.users.status_active')
+        : context.translate('ui.users.status_locked');
     final bgColor = active ? AppColors.successLight : AppColors.errorLight;
     final textColor = active ? AppColors.pureWhite : AppColors.pureWhite;
 

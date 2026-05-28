@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
@@ -37,7 +38,7 @@ class ArtistTableWidget extends StatelessWidget {
     if (artists.isEmpty) {
       return Center(
         child: Text(
-          'Không có nghệ sĩ nào.',
+          context.translate('ui.artists.empty'),
           style: Theme.of(context)
               .textTheme
               .bodyMedium
@@ -61,7 +62,7 @@ class ArtistTableWidget extends StatelessWidget {
           4: FixedColumnWidth(120),
         },
         children: [
-          _buildHeader(headerColor, borderColor, textSecondary),
+          _buildHeader(context, headerColor, borderColor, textSecondary),
           ...artists.asMap().entries.map(
                 (entry) => _buildRow(
                   context,
@@ -79,6 +80,7 @@ class ArtistTableWidget extends StatelessWidget {
   }
 
   TableRow _buildHeader(
+    BuildContext context,
     Color headerColor,
     Color borderColor,
     Color textSecondary,
@@ -90,10 +92,10 @@ class ArtistTableWidget extends StatelessWidget {
       ),
       children: [
         _headerCell('', textSecondary),
-        _headerCell('Tên nghệ sĩ', textSecondary),
-        _headerCell('Quốc gia', textSecondary),
+        _headerCell(context.translate('ui.artists.column_artist'), textSecondary),
+        _headerCell(context.translate('ui.artists.column_country'), textSecondary),
         _headerCell('Slug', textSecondary),
-        _headerCell('Hành động', textSecondary),
+        _headerCell(context.translate('ui.artists.column_actions'), textSecondary),
       ],
     );
   }
@@ -195,7 +197,7 @@ class ArtistTableWidget extends StatelessWidget {
               IconButton(
                 key: Key('artistTable_editButton_${artist.id}'),
                 icon: const Icon(Icons.edit_outlined, size: 18),
-                tooltip: 'Chỉnh sửa',
+                tooltip: context.translate('ui.common.edit'),
                 onPressed: () => onEdit(artist),
                 color: textSecondary,
                 visualDensity: VisualDensity.compact,
@@ -203,7 +205,7 @@ class ArtistTableWidget extends StatelessWidget {
               IconButton(
                 key: Key('artistTable_deleteButton_${artist.id}'),
                 icon: const Icon(Icons.delete_outline, size: 18),
-                tooltip: 'Xóa',
+                tooltip: context.translate('ui.common.delete'),
                 onPressed: () => onDelete(artist),
                 color: AppColors.errorLight,
                 visualDensity: VisualDensity.compact,

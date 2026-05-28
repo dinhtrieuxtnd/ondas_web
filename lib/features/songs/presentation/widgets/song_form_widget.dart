@@ -3,6 +3,7 @@ import 'dart:html' as html;
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
@@ -195,7 +196,7 @@ class _SongFormWidgetState extends State<SongFormWidget> {
     final selected = await showDialog<Set<String>>(
       context: context,
       builder: (_) => _MultiSelectDialog<String>(
-        title: 'Chọn nghệ sĩ',
+        title: context.translate('ui.songs.choose_artists'),
         options: widget.artistOptions,
         selectedValues: _selectedArtistIds,
       ),
@@ -209,7 +210,7 @@ class _SongFormWidgetState extends State<SongFormWidget> {
     final selected = await showDialog<Set<int>>(
       context: context,
       builder: (_) => _MultiSelectDialog<int>(
-        title: 'Chọn thể loại',
+        title: context.translate('ui.songs.choose_genres'),
         options: widget.genreOptions,
         selectedValues: _selectedGenreIds,
       ),
@@ -223,7 +224,7 @@ class _SongFormWidgetState extends State<SongFormWidget> {
     final selected = await showDialog<Set<int>>(
       context: context,
       builder: (_) => _MultiSelectDialog<int>(
-        title: 'Chọn tag',
+        title: context.translate('ui.songs.choose_tags'),
         options: widget.tagOptions,
         selectedValues: _selectedTagIds,
       ),
@@ -238,8 +239,8 @@ class _SongFormWidgetState extends State<SongFormWidget> {
 
     if (_selectedArtistIds.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Vui lòng chọn ít nhất 1 nghệ sĩ.'),
+        SnackBar(
+          content: Text(context.translate('ui.songs.error.empty_artists')),
           backgroundColor: AppColors.errorLight,
         ),
       );
@@ -248,8 +249,8 @@ class _SongFormWidgetState extends State<SongFormWidget> {
 
     if (_selectedGenreIds.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Vui lòng chọn ít nhất 1 thể loại.'),
+        SnackBar(
+          content: Text(context.translate('ui.songs.error.empty_genres')),
           backgroundColor: AppColors.errorLight,
         ),
       );
@@ -258,8 +259,8 @@ class _SongFormWidgetState extends State<SongFormWidget> {
 
     if (!_isEditing && (_audioBytes == null || _audioFileName == null)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Vui lòng chọn file audio khi tạo bài hát mới.'),
+        SnackBar(
+          content: Text(context.translate('ui.songs.error.empty_audio')),
           backgroundColor: AppColors.errorLight,
         ),
       );
@@ -325,7 +326,7 @@ class _SongFormWidgetState extends State<SongFormWidget> {
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(
                     child: Text(
-                      widget.optionsError!,
+                      context.translateErrorCode(widget.optionsError!),
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: AppColors.errorLight,
                       ),
@@ -333,7 +334,7 @@ class _SongFormWidgetState extends State<SongFormWidget> {
                   ),
                   TextButton(
                     onPressed: widget.onReloadOptions,
-                    child: const Text('Thử lại'),
+                    child: Text(context.translate('ui.common.retry')),
                   ),
                 ],
               ),
@@ -354,9 +355,9 @@ class _SongFormWidgetState extends State<SongFormWidget> {
                         initialDate: _selectedReleaseDate ?? now,
                         firstDate: DateTime(1900),
                         lastDate: DateTime(2100),
-                        helpText: 'Chọn ngày phát hành',
-                        cancelText: 'Hủy',
-                        confirmText: 'Chọn',
+                        helpText: context.translate('ui.songs.release_date_picker_title'),
+                        cancelText: context.translate('ui.common.cancel'),
+                        confirmText: context.translate('ui.common.select'),
                       );
                       if (picked != null) {
                         setState(() => _selectedReleaseDate = picked);
@@ -424,7 +425,7 @@ class _SongFormWidgetState extends State<SongFormWidget> {
                     vertical: AppSpacing.smMd,
                   ),
                 ),
-                child: const Text('Hủy'),
+                child: Text(context.translate('ui.common.cancel')),
               ),
               const SizedBox(width: AppSpacing.md),
               ElevatedButton(
@@ -450,7 +451,11 @@ class _SongFormWidgetState extends State<SongFormWidget> {
                           color: AppColors.pureWhite,
                         ),
                       )
-                    : Text(widget.initialSong != null ? 'Cập nhật' : 'Tạo mới'),
+                    : Text(
+                        widget.initialSong != null
+                            ? context.translate('ui.common.update')
+                            : context.translate('ui.common.create'),
+                      ),
               ),
             ],
           ),
@@ -532,7 +537,7 @@ class _FieldsCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                'Thông tin bài hát',
+                context.translate('ui.songs.basic_info'),
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: textPrimary,
                   fontWeight: FontWeight.w600,
@@ -551,22 +556,22 @@ class _FieldsCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xxl),
           _FormField(
             key: const Key('songForm_titleField'),
-            label: 'Tiêu đề *',
+            label: context.translate('ui.songs.title_label'),
             controller: titleCtrl,
-            hintText: 'VD: Nơi này có anh',
+            hintText: context.translate('ui.songs.title_hint'),
             textColor: textPrimary,
             borderColor: borderColor,
             validator: (v) =>
-                (v == null || v.trim().isEmpty) ? 'Không được để trống' : null,
+                (v == null || v.trim().isEmpty) ? context.translate('ui.common.not_null') : null,
           ),
           const SizedBox(height: AppSpacing.xl),
           DropdownButtonFormField<String?>(
             key: ValueKey<String?>('songForm_albumDropdown_$safeAlbumValue'),
             initialValue: safeAlbumValue,
             items: [
-              const DropdownMenuItem<String?>(
+              DropdownMenuItem<String?>(
                 value: null,
-                child: Text('Không gán album'),
+                child: Text(context.translate('ui.songs.no_album_option')),
               ),
               ...albumOptions.map(
                 (option) => DropdownMenuItem<String?>(
@@ -577,7 +582,7 @@ class _FieldsCard extends StatelessWidget {
             ],
             onChanged: optionsLoading ? null : onAlbumChanged,
             decoration: InputDecoration(
-              labelText: 'Album',
+              labelText: context.translate('ui.songs.album_label'),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppRadius.container),
               ),
@@ -600,7 +605,7 @@ class _FieldsCard extends StatelessWidget {
               Expanded(
                 child: _FormField(
                   key: const Key('songForm_trackNumberField'),
-                  label: 'Track number',
+                  label: context.translate('ui.songs.track_number_label'),
                   controller: trackNumberCtrl,
                   hintText: '1',
                   textColor: textPrimary,
@@ -610,7 +615,7 @@ class _FieldsCard extends StatelessWidget {
                     final text = (v ?? '').trim();
                     if (text.isEmpty) return null;
                     return int.tryParse(text) == null
-                        ? 'Phải là số nguyên'
+                        ? context.translate('ui.songs.error.invalid_track_number')
                         : null;
                   },
                 ),
@@ -620,9 +625,9 @@ class _FieldsCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Ngày phát hành',
-                      style: TextStyle(
+                    Text(
+                      context.translate('ui.songs.release_date_label'),
+                      style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                       ),
@@ -648,7 +653,7 @@ class _FieldsCard extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 selectedReleaseDate == null
-                                    ? 'Chọn ngày...'
+                                    ? context.translate('ui.songs.release_date_hint')
                                     : '${selectedReleaseDate!.day.toString().padLeft(2, '0')}/'
                                           '${selectedReleaseDate!.month.toString().padLeft(2, '0')}/'
                                           '${selectedReleaseDate!.year}',
@@ -677,35 +682,35 @@ class _FieldsCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xl),
           _MultiSelectField<String>(
             key: const Key('songForm_artistMultiSelect'),
-            label: 'Nghệ sĩ *',
+            label: context.translate('ui.songs.artists_label'),
             options: artistOptions,
             selectedValues: selectedArtistIds,
             onTap: optionsLoading ? null : onPickArtists,
             borderColor: borderColor,
             textColor: textPrimary,
-            hintText: 'Chọn nghệ sĩ',
+            hintText: context.translate('ui.songs.artists_hint'),
           ),
           const SizedBox(height: AppSpacing.xl),
           _MultiSelectField<int>(
             key: const Key('songForm_genreMultiSelect'),
-            label: 'Thể loại *',
+            label: context.translate('ui.songs.genres_label'),
             options: genreOptions,
             selectedValues: selectedGenreIds,
             onTap: optionsLoading ? null : onPickGenres,
             borderColor: borderColor,
             textColor: textPrimary,
-            hintText: 'Chọn thể loại',
+            hintText: context.translate('ui.songs.genres_hint'),
           ),
           const SizedBox(height: AppSpacing.xl),
           _MultiSelectField<int>(
             key: const Key('songForm_tagMultiSelect'),
-            label: 'Tag',
+            label: context.translate('ui.songs.tags_label'),
             options: tagOptions,
             selectedValues: selectedTagIds,
             onTap: optionsLoading ? null : onPickTags,
             borderColor: borderColor,
             textColor: textPrimary,
-            hintText: 'Chọn tag (tùy chọn)',
+            hintText: context.translate('ui.songs.tags_hint'),
           ),
           const SizedBox(height: AppSpacing.xl),
           Row(
@@ -721,7 +726,7 @@ class _FieldsCard extends StatelessWidget {
               const SizedBox(width: AppSpacing.sm),
               if (!isEditing)
                 Text(
-                  '(Chỉ sửa khi edit)',
+                  context.translate('ui.songs.active_edit_only_hint'),
                   style: Theme.of(
                     context,
                   ).textTheme.bodySmall?.copyWith(color: textSecondary),
@@ -869,11 +874,11 @@ class _MultiSelectDialogState<T> extends State<_MultiSelectDialog<T>> {
             TextField(
               controller: _searchCtrl,
               autofocus: true,
-              decoration: const InputDecoration(
-                hintText: 'Tìm kiếm...',
-                prefixIcon: Icon(Icons.search, size: 18),
+              decoration: InputDecoration(
+                hintText: context.translate('ui.songs.search_hint'),
+                prefixIcon: const Icon(Icons.search, size: 18),
                 isDense: true,
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
               ),
               onChanged: (v) => setState(() => _searchQuery = v),
             ),
@@ -907,11 +912,11 @@ class _MultiSelectDialogState<T> extends State<_MultiSelectDialog<T>> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Hủy'),
+          child: Text(context.translate('ui.common.cancel')),
         ),
         ElevatedButton(
           onPressed: () => Navigator.of(context).pop(_working),
-          child: const Text('Xong'),
+          child: Text(context.translate('ui.common.done')),
         ),
       ],
     );
@@ -967,7 +972,7 @@ class _MediaCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Media',
+            context.translate('ui.songs.media_title'),
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: textPrimary,
               fontWeight: FontWeight.w600,
@@ -996,7 +1001,7 @@ class _MediaCard extends StatelessWidget {
             key: const Key('songForm_coverPickButton'),
             onPressed: isLoading ? null : onPickCover,
             icon: const Icon(Icons.upload_outlined, size: 14),
-            label: const Text('Tải ảnh cover'),
+            label: Text(context.translate('ui.songs.cover_upload')),
             style: OutlinedButton.styleFrom(
               foregroundColor: textSecondary,
               side: BorderSide(color: borderColor),
@@ -1020,7 +1025,11 @@ class _MediaCard extends StatelessWidget {
             key: const Key('songForm_audioPickButton'),
             onPressed: isLoading ? null : onPickAudio,
             icon: const Icon(Icons.audiotrack, size: 14),
-            label: Text(isEditing ? 'Thay file audio' : 'Tải file audio *'),
+            label: Text(
+              isEditing
+                  ? context.translate('ui.songs.audio_replace')
+                  : context.translate('ui.songs.audio_upload'),
+            ),
             style: OutlinedButton.styleFrom(
               foregroundColor: textSecondary,
               side: BorderSide(color: borderColor),
@@ -1041,7 +1050,7 @@ class _MediaCard extends StatelessWidget {
           ] else if (!isEditing) ...[
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'Bắt buộc khi tạo mới',
+              context.translate('ui.songs.audio_required_hint'),
               style: Theme.of(
                 context,
               ).textTheme.bodySmall?.copyWith(color: AppColors.errorLight),
@@ -1050,7 +1059,7 @@ class _MediaCard extends StatelessWidget {
           ],
           const Spacer(),
           Text(
-            'Nguồn dữ liệu artist, genre, album, tag được tải từ API.',
+            context.translate('ui.songs.api_data_hint'),
             style: Theme.of(
               context,
             ).textTheme.bodySmall?.copyWith(color: textSecondary, fontSize: 11),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
@@ -21,8 +22,9 @@ class AlbumCardGridWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
-    final textSecondary =
-        isLight ? AppColors.stone : AppColors.darkTextSecondary;
+    final textSecondary = isLight
+        ? AppColors.stone
+        : AppColors.darkTextSecondary;
 
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -41,10 +43,9 @@ class AlbumCardGridWidget extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             Text(
               'Không có album nào.',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: textSecondary),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: textSecondary),
             ),
           ],
         ),
@@ -56,12 +57,12 @@ class AlbumCardGridWidget extends StatelessWidget {
         final crossAxisCount = constraints.maxWidth > 1400
             ? 5
             : constraints.maxWidth > 1050
-                ? 4
-                : constraints.maxWidth > 720
-                    ? 3
-                    : constraints.maxWidth > 440
-                        ? 2
-                        : 1;
+            ? 4
+            : constraints.maxWidth > 720
+            ? 3
+            : constraints.maxWidth > 440
+            ? 2
+            : 1;
 
         return GridView.builder(
           padding: EdgeInsets.zero,
@@ -109,10 +110,12 @@ class _AlbumCardState extends State<_AlbumCard> {
     final bgCard = isLight ? AppColors.pureWhite : AppColors.darkSurface;
     final borderColor = isLight ? AppColors.lightGray : AppColors.darkBorder;
     final borderHover = isLight ? AppColors.silver : AppColors.darkBorderStrong;
-    final textPrimary =
-        isLight ? AppColors.nearBlack : AppColors.darkTextPrimary;
-    final textSecondary =
-        isLight ? AppColors.stone : AppColors.darkTextSecondary;
+    final textPrimary = isLight
+        ? AppColors.nearBlack
+        : AppColors.darkTextPrimary;
+    final textSecondary = isLight
+        ? AppColors.stone
+        : AppColors.darkTextSecondary;
 
     final album = widget.album;
 
@@ -220,7 +223,7 @@ class _AlbumCardState extends State<_AlbumCard> {
                     Text(
                       album.artistNames.isNotEmpty
                           ? album.artistNames.join(', ')
-                          : 'Chưa có nghệ sĩ',
+                          : context.translate('ui.albums.no_artist'),
                       style: TextStyle(fontSize: 12, color: textSecondary),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -230,8 +233,11 @@ class _AlbumCardState extends State<_AlbumCard> {
                     // Meta row: tracks · date | edit | delete
                     Row(
                       children: [
-                        Icon(Icons.music_note_rounded,
-                            size: 11, color: textSecondary),
+                        Icon(
+                          Icons.music_note_rounded,
+                          size: 11,
+                          color: textSecondary,
+                        ),
                         const SizedBox(width: 3),
                         Text(
                           '${album.totalTracks}',
@@ -240,18 +246,23 @@ class _AlbumCardState extends State<_AlbumCard> {
                         if (album.releaseDate != null) ...[
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.xs),
+                              horizontal: AppSpacing.xs,
+                            ),
                             child: Text(
                               '·',
                               style: TextStyle(
-                                  fontSize: 11, color: textSecondary),
+                                fontSize: 11,
+                                color: textSecondary,
+                              ),
                             ),
                           ),
                           Expanded(
                             child: Text(
                               album.releaseDate!,
                               style: TextStyle(
-                                  fontSize: 11, color: textSecondary),
+                                fontSize: 11,
+                                color: textSecondary,
+                              ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
@@ -266,7 +277,9 @@ class _AlbumCardState extends State<_AlbumCard> {
                             key: Key('albumCard_editButton_${album.id}'),
                             padding: EdgeInsets.zero,
                             icon: const Icon(Icons.edit_rounded, size: 14),
-                            tooltip: 'Sửa',
+                            tooltip: context.translate(
+                              'ui.common.edit',
+                            ),
                             onPressed: () => widget.onEdit(album),
                             color: textSecondary,
                             hoverColor: isLight
@@ -285,7 +298,9 @@ class _AlbumCardState extends State<_AlbumCard> {
                             key: Key('albumCard_deleteButton_${album.id}'),
                             padding: EdgeInsets.zero,
                             icon: const Icon(Icons.delete_rounded, size: 14),
-                            tooltip: 'Xóa',
+                            tooltip: context.translate(
+                              'ui.common.delete',
+                            ),
                             onPressed: () => widget.onDelete(album),
                             color: AppColors.errorLight,
                             hoverColor: AppColors.errorSurfaceLight,
@@ -355,8 +370,9 @@ class _CoverImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
-    final placeholderBg =
-        isLight ? AppColors.lightGray : AppColors.darkSurfaceElevated;
+    final placeholderBg = isLight
+        ? AppColors.lightGray
+        : AppColors.darkSurfaceElevated;
 
     if (coverUrl != null && coverUrl!.isNotEmpty) {
       return Image.network(
@@ -386,7 +402,11 @@ class _Placeholder extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.album_rounded, size: 52, color: AppColors.stone.withAlpha(70)),
+          Icon(
+            Icons.album_rounded,
+            size: 52,
+            color: AppColors.stone.withAlpha(70),
+          ),
           if (title.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
             Padding(

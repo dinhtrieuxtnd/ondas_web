@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
 import 'package:ondas_web/features/albums/domain/entities/album.dart';
@@ -35,7 +36,9 @@ class _AlbumFormScreenState extends State<AlbumFormScreen> {
     if (widget.isEditing) {
       context.read<AlbumBloc>().add(AlbumLoadDetailEvent(id: widget.albumId!));
     }
-    context.read<ArtistBloc>().add(const ArtistLoadListEvent(page: 0, size: 100));
+    context.read<ArtistBloc>().add(
+      const ArtistLoadListEvent(page: 0, size: 100),
+    );
     context.read<SongBloc>().add(const SongLoadListEvent(page: 0, size: 200));
   }
 
@@ -54,34 +57,34 @@ class _AlbumFormScreenState extends State<AlbumFormScreen> {
       // previousSongIds = tracklist bài hát hiện tại của album
       final prevIds = _cachedAlbum?.tracklist.map((t) => t.id).toList() ?? [];
       context.read<AlbumBloc>().add(
-            AlbumUpdateEvent(
-              id: widget.albumId!,
-              title: title,
-              slug: slug,
-              releaseDate: releaseDate,
-              albumType: albumType,
-              description: description,
-              artistIds: artistIds,
-              coverBytes: coverBytes,
-              coverFileName: coverFileName,
-              songIds: songIds,
-              previousSongIds: prevIds,
-            ),
-          );
+        AlbumUpdateEvent(
+          id: widget.albumId!,
+          title: title,
+          slug: slug,
+          releaseDate: releaseDate,
+          albumType: albumType,
+          description: description,
+          artistIds: artistIds,
+          coverBytes: coverBytes,
+          coverFileName: coverFileName,
+          songIds: songIds,
+          previousSongIds: prevIds,
+        ),
+      );
     } else {
       context.read<AlbumBloc>().add(
-            AlbumCreateEvent(
-              title: title,
-              slug: slug,
-              releaseDate: releaseDate,
-              albumType: albumType,
-              description: description,
-              artistIds: artistIds,
-              coverBytes: coverBytes,
-              coverFileName: coverFileName,
-              songIds: songIds,
-            ),
-          );
+        AlbumCreateEvent(
+          title: title,
+          slug: slug,
+          releaseDate: releaseDate,
+          albumType: albumType,
+          description: description,
+          artistIds: artistIds,
+          coverBytes: coverBytes,
+          coverFileName: coverFileName,
+          songIds: songIds,
+        ),
+      );
     }
   }
 
@@ -89,8 +92,9 @@ class _AlbumFormScreenState extends State<AlbumFormScreen> {
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
     final bgColor = isLight ? AppColors.pureWhite : AppColors.darkBackground;
-    final textPrimary =
-        isLight ? AppColors.nearBlack : AppColors.darkTextPrimary;
+    final textPrimary = isLight
+        ? AppColors.nearBlack
+        : AppColors.darkTextPrimary;
 
     return MultiBlocListener(
       listeners: [
@@ -102,7 +106,7 @@ class _AlbumFormScreenState extends State<AlbumFormScreen> {
             } else if (state is AlbumOperationSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(state.message),
+                  content: Text(context.translateErrorCode(state.message)),
                   backgroundColor: AppColors.successLight,
                 ),
               );
@@ -110,7 +114,7 @@ class _AlbumFormScreenState extends State<AlbumFormScreen> {
             } else if (state is AlbumOperationError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(state.message),
+                  content: Text(context.translateErrorCode(state.message)),
                   backgroundColor: AppColors.errorLight,
                 ),
               );
@@ -136,9 +140,15 @@ class _AlbumFormScreenState extends State<AlbumFormScreen> {
               builder: (context, artistState) {
                 return BlocBuilder<SongBloc, SongState>(
                   builder: (context, songState) {
-                    final artists = artistState is ArtistListLoaded ? artistState.artists : [];
-                    final songs = songState is SongListLoaded ? songState.songs : [];
-                    final optionsLoading = artistState is ArtistListLoading || songState is SongListLoading;
+                    final artists = artistState is ArtistListLoaded
+                        ? artistState.artists
+                        : [];
+                    final songs = songState is SongListLoaded
+                        ? songState.songs
+                        : [];
+                    final optionsLoading =
+                        artistState is ArtistListLoading ||
+                        songState is SongListLoading;
 
                     return SingleChildScrollView(
                       padding: const EdgeInsets.all(AppSpacing.xxl),
@@ -155,10 +165,14 @@ class _AlbumFormScreenState extends State<AlbumFormScreen> {
                               ),
                               const SizedBox(width: AppSpacing.sm),
                               Text(
-                                widget.isEditing ? 'Chỉnh sửa album' : 'Thêm album mới',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall
+                                widget.isEditing
+                                    ? context.translate(
+                                        'ui.albums.edit',
+                                      )
+                                    : context.translate(
+                                        'ui.albums.create',
+                                      ),
+                                style: Theme.of(context).textTheme.headlineSmall
                                     ?.copyWith(
                                       color: textPrimary,
                                       fontWeight: FontWeight.w600,
@@ -175,15 +189,23 @@ class _AlbumFormScreenState extends State<AlbumFormScreen> {
                               initialAlbum: initialAlbum,
                               isLoading: isOperationLoading,
                               optionsLoading: optionsLoading,
-                              artistOptions: artists.map((a) => AlbumFormOption<String>(
-                                value: a.id,
-                                label: a.name,
-                              )).toList(),
-                              songOptions: songs.map((s) => AlbumFormOption<String>(
-                                value: s.id,
-                                label: s.title,
-                                albumId: s.albumId,
-                              )).toList(),
+                              artistOptions: artists
+                                  .map(
+                                    (a) => AlbumFormOption<String>(
+                                      value: a.id,
+                                      label: a.name,
+                                    ),
+                                  )
+                                  .toList(),
+                              songOptions: songs
+                                  .map(
+                                    (s) => AlbumFormOption<String>(
+                                      value: s.id,
+                                      label: s.title,
+                                      albumId: s.albumId,
+                                    ),
+                                  )
+                                  .toList(),
                               onSubmit: _onSubmit,
                             ),
                         ],

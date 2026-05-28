@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
@@ -33,7 +34,7 @@ class PlaylistTableWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.container),
         ),
         padding: const EdgeInsets.all(AppSpacing.xxl),
-        child: const Center(child: Text('Chưa có playlist nào')),
+        child: Center(child: Text(context.translate('ui.playlists.empty'))),
       );
     }
 
@@ -55,18 +56,18 @@ class PlaylistTableWidget extends StatelessWidget {
               child: Row(
                 children: [
                   const SizedBox(width: 56),
-                  const Expanded(child: Text('Playlist')),
+                  Expanded(child: Text(context.translate('ui.playlists.column_playlist'))),
                   SizedBox(
                     width: 120,
                     child: Text(
-                      'Songs',
+                      context.translate('ui.playlists.column_songs'),
                       style: TextStyle(color: textSecondary),
                     ),
                   ),
                   SizedBox(
                     width: 180,
                     child: Text(
-                      'Updated',
+                      context.translate('ui.playlists.column_updated'),
                       style: TextStyle(color: textSecondary),
                     ),
                   ),
@@ -102,7 +103,9 @@ class PlaylistTableWidget extends StatelessWidget {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                playlist.isPublic ? 'Public' : 'Private',
+                                playlist.isPublic
+                                    ? context.translate('ui.playlists.visibility_public')
+                                    : context.translate('ui.playlists.visibility_private'),
                                 style: TextStyle(color: textSecondary),
                               ),
                             ],
@@ -110,7 +113,11 @@ class PlaylistTableWidget extends StatelessWidget {
                         ),
                         SizedBox(
                           width: 120,
-                          child: Text('${playlist.totalSongs} songs'),
+                          child: Text(
+                            playlist.totalSongs == 1
+                                ? context.translate('ui.playlists.song_count_single', {'count': playlist.totalSongs})
+                                : context.translate('ui.playlists.song_count_plural', {'count': playlist.totalSongs}),
+                          ),
                         ),
                         SizedBox(
                           width: 180,
@@ -127,12 +134,12 @@ class PlaylistTableWidget extends StatelessWidget {
                           spacing: AppSpacing.xs,
                           children: [
                             IconButton(
-                              tooltip: 'Sửa',
+                              tooltip: context.translate('ui.common.edit'),
                               icon: const Icon(Icons.edit_outlined),
                               onPressed: () => onEdit(playlist),
                             ),
                             IconButton(
-                              tooltip: 'Xóa',
+                              tooltip: context.translate('ui.common.delete'),
                               icon: const Icon(Icons.delete_outline),
                               onPressed: () => onDelete(playlist),
                             ),

@@ -78,7 +78,7 @@ void main() {
 
     await tester.pumpWidget(buildSubject());
 
-    expect(find.text('Không có thể loại nào.'), findsOneWidget);
+    expect(find.text('No genres yet.'), findsOneWidget);
   });
 
   testWidgets('adds GenreLoadListEvent on initState', (tester) async {

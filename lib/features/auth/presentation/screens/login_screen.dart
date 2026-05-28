@@ -6,6 +6,7 @@ import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
 import 'package:ondas_web/core/theme/app_typography.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ondas_web/features/auth/presentation/bloc/auth_state.dart';
 import 'package:ondas_web/features/auth/presentation/widgets/login_form_widget.dart';
@@ -87,7 +88,7 @@ class _LoginHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Đăng nhập',
+                context.translate('ui.auth.login_title'),
                 style: AppTypography.headingMedium.copyWith(
                   color: textColor,
                   fontWeight: FontWeight.w500,
@@ -95,7 +96,7 @@ class _LoginHeader extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                'Chào mừng trở lại, Admin.',
+                context.translate('ui.auth.welcome_back'),
                 style: AppTypography.body.copyWith(color: subtitleColor),
               ),
             ],

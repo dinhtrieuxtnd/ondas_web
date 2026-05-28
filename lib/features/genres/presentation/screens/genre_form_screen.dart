@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
 import 'package:ondas_web/features/genres/domain/entities/genre.dart';
@@ -78,7 +79,7 @@ class _GenreFormScreenState extends State<GenreFormScreen> {
         if (state is GenreOperationSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(context.translateErrorCode(state.message)),
               backgroundColor: AppColors.successLight,
             ),
           );
@@ -86,7 +87,7 @@ class _GenreFormScreenState extends State<GenreFormScreen> {
         } else if (state is GenreOperationError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(context.translateErrorCode(state.message)),
               backgroundColor: AppColors.errorLight,
             ),
           );
@@ -121,8 +122,8 @@ class _GenreFormScreenState extends State<GenreFormScreen> {
                       const SizedBox(width: AppSpacing.sm),
                       Text(
                         widget.isEditing
-                            ? 'Chỉnh sửa thể loại'
-                            : 'Thêm thể loại mới',
+                            ? context.translate('ui.genres.edit')
+                            : context.translate('ui.genres.create'),
                         style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(
                               color: textPrimary,

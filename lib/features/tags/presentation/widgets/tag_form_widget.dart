@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
@@ -81,7 +82,7 @@ class _TagFormWidgetState extends State<TagFormWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Thông tin Tag',
+              context.translate('ui.tags.basic_info'),
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 color: textPrimary,
                 fontWeight: FontWeight.w600,
@@ -90,21 +91,21 @@ class _TagFormWidgetState extends State<TagFormWidget> {
             const SizedBox(height: AppSpacing.xxl),
             _TagTextField(
               controller: _nameCtrl,
-              label: 'Tên *',
+              label: context.translate('ui.tags.name_label'),
               hintText: 'Happy',
               textColor: textPrimary,
               borderColor: borderColor,
               validator: (value) => value == null || value.trim().isEmpty
-                  ? 'Không được để trống'
+                  ? context.translate('ui.common.not_null')
                   : null,
             ),
             const SizedBox(height: AppSpacing.xl),
             SegmentedButton<String>(
-              segments: const [
-                ButtonSegment(value: 'mood', label: Text('Mood')),
-                ButtonSegment(value: 'theme', label: Text('Theme')),
-                ButtonSegment(value: 'activity', label: Text('Activity')),
-                ButtonSegment(value: 'era', label: Text('Era')),
+              segments: [
+                ButtonSegment(value: 'mood', label: Text(context.translate('ui.tags.type_mood'))),
+                ButtonSegment(value: 'theme', label: Text(context.translate('ui.tags.type_theme'))),
+                ButtonSegment(value: 'activity', label: Text(context.translate('ui.tags.type_activity'))),
+                ButtonSegment(value: 'era', label: Text(context.translate('ui.tags.type_era'))),
               ],
               selected: {_type},
               onSelectionChanged: widget.isLoading
@@ -114,7 +115,7 @@ class _TagFormWidgetState extends State<TagFormWidget> {
             const SizedBox(height: AppSpacing.xl),
             _TagTextField(
               controller: _colorCtrl,
-              label: 'Màu hex',
+              label: context.translate('ui.tags.color_label'),
               hintText: '#FF9900',
               textColor: textPrimary,
               borderColor: borderColor,
@@ -137,7 +138,7 @@ class _TagFormWidgetState extends State<TagFormWidget> {
                 if (text.isEmpty) return null;
                 return RegExp(r'^#[0-9A-Fa-f]{6}$').hasMatch(text)
                     ? null
-                    : 'Định dạng không hợp lệ #RRGGBB';
+                    : context.translate('ui.tags.error.invalid_color');
               },
             ),
             const SizedBox(height: AppSpacing.xxl),
@@ -151,7 +152,7 @@ class _TagFormWidgetState extends State<TagFormWidget> {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: textSecondary,
                   ),
-                  child: const Text('Hủy'),
+                  child: Text(context.translate('ui.common.cancel')),
                 ),
                 const SizedBox(width: AppSpacing.md),
                 ElevatedButton(
@@ -163,7 +164,9 @@ class _TagFormWidgetState extends State<TagFormWidget> {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : Text(
-                          widget.initialTag == null ? 'Tạo mới' : 'Cập nhật',
+                          widget.initialTag == null
+                              ? context.translate('ui.common.create')
+                              : context.translate('ui.common.update'),
                         ),
                 ),
               ],

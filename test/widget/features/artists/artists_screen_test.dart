@@ -80,7 +80,7 @@ void main() {
 
     await tester.pumpWidget(buildSubject());
 
-    expect(find.text('Không có nghệ sĩ nào.'), findsOneWidget);
+    expect(find.text('No artists yet.'), findsOneWidget);
   });
 
   testWidgets('adds ArtistLoadListEvent on initState', (tester) async {
@@ -109,7 +109,7 @@ void main() {
     expect(find.byKey(const Key('artistsScreen_searchField')), findsOneWidget);
   });
 
-  testWidgets('adds ArtistSearchEvent when search is submitted', (tester) async {
+  testWidgets('adds ArtistLoadListEvent with query when search is submitted', (tester) async {
     when(() => mockBloc.state).thenReturn(tListLoaded);
 
     await tester.pumpWidget(buildSubject());
@@ -121,7 +121,7 @@ void main() {
     await tester.pump();
 
     verify(
-      () => mockBloc.add(const ArtistSearchEvent(query: 'son tung')),
+      () => mockBloc.add(const ArtistLoadListEvent(page: 0, size: 20, query: 'son tung')),
     ).called(1);
   });
 

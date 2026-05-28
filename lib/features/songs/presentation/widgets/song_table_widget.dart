@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
@@ -59,7 +60,7 @@ class SongTableWidget extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
-              'Chưa có bài hát nào',
+              context.translate('ui.songs.empty'),
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: isLight
                         ? AppColors.nearBlack
@@ -69,7 +70,7 @@ class SongTableWidget extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xxs),
             Text(
-              'Nhấn "Thêm bài hát" để bắt đầu',
+              context.translate('ui.songs.empty_subtitle'),
               style: TextStyle(fontSize: 13, color: textSecondary),
             ),
           ],
@@ -149,12 +150,12 @@ class _SongTableHeader extends StatelessWidget {
         children: [
           const SizedBox(width: _kAvatarWidth),
           const SizedBox(width: AppSpacing.md),
-          Expanded(flex: _kTitleFlex, child: _cell('BÀI HÁT')),
-          Expanded(flex: _kArtistFlex, child: _cell('NGHỆ SĨ')),
-          Expanded(flex: _kGenreFlex, child: _cell('THỂ LOẠI')),
-          SizedBox(width: _kDurationWidth, child: _cell('THỜI LƯỢNG')),
-          SizedBox(width: _kStatusWidth, child: _cell('TRẠNG THÁI')),
-          SizedBox(width: _kActionsWidth, child: _cell('HÀNH ĐỘNG')),
+          Expanded(flex: _kTitleFlex, child: _cell(context.translate('ui.songs.column_title'))),
+          Expanded(flex: _kArtistFlex, child: _cell(context.translate('ui.songs.column_artist'))),
+          Expanded(flex: _kGenreFlex, child: _cell(context.translate('ui.songs.column_genre'))),
+          SizedBox(width: _kDurationWidth, child: _cell(context.translate('ui.songs.column_duration'))),
+          SizedBox(width: _kStatusWidth, child: _cell(context.translate('ui.songs.column_status'))),
+          SizedBox(width: _kActionsWidth, child: _cell(context.translate('ui.songs.column_actions'))),
         ],
       ),
     );
@@ -283,7 +284,7 @@ class _SongTableRowState extends State<_SongTableRow> {
                   _ActionIconButton(
                     key: Key('songTable_editButton_${widget.song.id}'),
                     icon: Icons.edit_outlined,
-                    tooltip: 'Chỉnh sửa',
+                    tooltip: context.translate('ui.common.edit'),
                     color: textSecondary,
                     hoverColor: AppColors.nearBlack,
                     isLight: isLight,
@@ -293,7 +294,7 @@ class _SongTableRowState extends State<_SongTableRow> {
                   _ActionIconButton(
                     key: Key('songTable_deleteButton_${widget.song.id}'),
                     icon: Icons.delete_outline,
-                    tooltip: 'Xóa',
+                    tooltip: context.translate('ui.common.delete'),
                     color: AppColors.silver,
                     hoverColor: AppColors.errorLight,
                     isLight: isLight,
@@ -460,7 +461,9 @@ class _StatusBadge extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.xxs + 1),
             Text(
-              active ? 'Active' : 'Inactive',
+              active
+                  ? context.translate('ui.songs.status_active')
+                  : context.translate('ui.songs.status_inactive'),
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,

@@ -78,7 +78,7 @@ void main() {
 
     await tester.pumpWidget(buildSubject());
 
-    expect(find.text('Khong co bai hat nao.'), findsOneWidget);
+    expect(find.text('No songs yet'), findsWidgets);
   });
 
   testWidgets('adds SongLoadListEvent on initState', (tester) async {

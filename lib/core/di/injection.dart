@@ -1,6 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 
+import 'package:ondas_web/app/bloc/locale_cubit.dart';
 import 'package:ondas_web/core/network/dio_client.dart';
 import 'package:ondas_web/core/network/jwt_interceptor.dart';
 import 'package:ondas_web/core/storage/secure_storage.dart';
@@ -124,6 +125,9 @@ Future<void> setupDependencies() async {
   );
   sl.registerLazySingleton<SecureStorage>(
     () => SecureStorage(flutterSecureStorage),
+  );
+  sl.registerLazySingleton<LocaleCubit>(
+    () => LocaleCubit(storage: sl<SecureStorage>()),
   );
 
   // ── Network ────────────────────────────────────────────────────────────────

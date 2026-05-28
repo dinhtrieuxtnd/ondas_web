@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
@@ -248,7 +249,7 @@ class LyricsFormWidgetState extends State<LyricsFormWidget> {
       if (line.lineTextController.text.trim().isEmpty) {
         if (showValidationErrors) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Mỗi dòng synced phải có nội dung.')),
+            SnackBar(content: Text(context.translate('ui.lyrics.error.empty_row'))),
           );
         }
         return false;
@@ -259,7 +260,7 @@ class LyricsFormWidgetState extends State<LyricsFormWidget> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Dòng ${i + 1}: Start phải đúng định dạng mm:ss (vd 01:18.5).',
+                context.translate('ui.lyrics.error.invalid_start', {'index': i + 1}),
               ),
             ),
           );
@@ -274,7 +275,7 @@ class LyricsFormWidgetState extends State<LyricsFormWidget> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  'Dòng ${i + 1}: End phải đúng định dạng mm:ss (vd 01:18.5).',
+                  context.translate('ui.lyrics.error.invalid_end', {'index': i + 1}),
                 ),
               ),
             );
@@ -373,12 +374,12 @@ class LyricsFormWidgetState extends State<LyricsFormWidget> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Xác nhận xoá'),
-        content: const Text('Bạn có chắc muốn xoá lyrics của bài hát này?'),
+        title: Text(context.translate('ui.lyrics.delete_title')),
+        content: Text(context.translate('ui.lyrics.delete_message')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Huỷ'),
+            child: Text(context.translate('ui.common.cancel')),
           ),
           TextButton(
             onPressed: () {
@@ -387,7 +388,10 @@ class LyricsFormWidgetState extends State<LyricsFormWidget> {
                   .read<LyricsBloc>()
                   .add(LyricsDeleteEvent(songId: widget.songId));
             },
-            child: const Text('Xoá', style: TextStyle(color: Colors.red)),
+            child: Text(
+              context.translate('ui.common.delete'),
+              style: const TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),
@@ -421,7 +425,7 @@ class LyricsFormWidgetState extends State<LyricsFormWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Lyrics',
+              context.translate('ui.lyrics.title'),
               style: textTheme.titleMedium?.copyWith(
                 color: textPrimary,
                 fontWeight: FontWeight.w600,
@@ -429,7 +433,7 @@ class LyricsFormWidgetState extends State<LyricsFormWidget> {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'Cập nhật lời bài hát (plain text hoặc synced).',
+              context.translate('ui.lyrics.subtitle'),
               style: textTheme.bodySmall?.copyWith(color: textSecondary),
             ),
             const SizedBox(height: AppSpacing.xl),
@@ -439,8 +443,8 @@ class LyricsFormWidgetState extends State<LyricsFormWidget> {
               key: const Key('lyricsForm_languageField'),
               controller: _languageController,
               decoration: InputDecoration(
-                labelText: 'Ngôn ngữ',
-                hintText: 'vd: vi, en',
+                labelText: context.translate('ui.lyrics.language_label'),
+                hintText: context.translate('ui.lyrics.language_hint'),
                 prefixIcon: const Icon(Icons.language),
                 filled: true,
                 fillColor: fieldBg,
@@ -474,11 +478,11 @@ class LyricsFormWidgetState extends State<LyricsFormWidget> {
               child: SwitchListTile(
                 key: const Key('lyricsForm_syncedToggle'),
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Lời bài hát động (Synced Lyrics)'),
+                title: Text(context.translate('ui.lyrics.synced_label')),
                 subtitle: Text(
                   _hasSynced
-                      ? 'Nhập lời có timestamp cho từng dòng'
-                      : 'Nhập lời dạng plain text',
+                      ? context.translate('ui.lyrics.synced_desc_on')
+                      : context.translate('ui.lyrics.synced_desc_off'),
                   style: textTheme.bodySmall?.copyWith(color: textSecondary),
                 ),
                 value: _hasSynced,
@@ -523,7 +527,7 @@ class LyricsFormWidgetState extends State<LyricsFormWidget> {
                         foregroundColor: AppColors.errorLight,
                       ),
                       icon: const Icon(Icons.delete_outline, size: 18),
-                      label: const Text('Xoá Lyrics'),
+                      label: Text(context.translate('ui.lyrics.delete_button')),
                     ),
                   if (_isEditing && widget.allowDelete)
                     const SizedBox(width: AppSpacing.sm),
@@ -533,7 +537,9 @@ class LyricsFormWidgetState extends State<LyricsFormWidget> {
                       onPressed: isSaving ? null : _submit,
                       icon: const Icon(Icons.save_outlined, size: 18),
                       label: Text(
-                        _isEditing ? 'Cập nhật Lyrics' : 'Tạo Lyrics',
+                        _isEditing
+                            ? context.translate('ui.lyrics.update_button')
+                            : context.translate('ui.lyrics.create_button'),
                       ),
                     ),
                   if (isSaving && widget.allowSubmit) ...[
@@ -565,8 +571,8 @@ class LyricsFormWidgetState extends State<LyricsFormWidget> {
       minLines: 8,
       maxLines: 14,
       decoration: InputDecoration(
-        labelText: 'Lời bài hát',
-        hintText: 'Nhập lời bài hát dạng plain text...',
+        labelText: context.translate('ui.lyrics.plain_label'),
+        hintText: context.translate('ui.lyrics.plain_hint'),
         alignLabelWithHint: true,
         filled: true,
         fillColor: fieldBg,
@@ -604,7 +610,7 @@ class LyricsFormWidgetState extends State<LyricsFormWidget> {
         Row(
           children: [
             Text(
-              'Danh sách dòng synced',
+              context.translate('ui.lyrics.synced_list_title'),
               style: textTheme.titleSmall?.copyWith(color: textPrimary),
             ),
             const Spacer(),
@@ -612,7 +618,7 @@ class LyricsFormWidgetState extends State<LyricsFormWidget> {
               key: const Key('lyricsForm_addLineButton'),
               onPressed: disabled ? null : () => _addLine(),
               icon: const Icon(Icons.add, size: 18),
-              label: const Text('Thêm dòng'),
+              label: Text(context.translate('ui.lyrics.add_row')),
             ),
           ],
         ),
@@ -622,7 +628,7 @@ class LyricsFormWidgetState extends State<LyricsFormWidget> {
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
             child: Center(
               child: Text(
-                'Chưa có dòng nào. Nhấn "Thêm dòng" để bắt đầu.',
+                context.translate('ui.lyrics.empty_rows'),
                 style: textTheme.bodyMedium?.copyWith(color: textSecondary),
               ),
             ),
@@ -851,7 +857,7 @@ class _SyncedLineRow extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Start (mm:ss)',
+                            context.translate('ui.lyrics.start_label'),
                             style: TextStyle(color: textPrimary),
                           ),
                           const SizedBox(height: AppSpacing.xs),
@@ -873,7 +879,7 @@ class _SyncedLineRow extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'End (mm:ss)',
+                            context.translate('ui.lyrics.end_label'),
                             style: TextStyle(color: textPrimary),
                           ),
                           const SizedBox(height: AppSpacing.xs),
@@ -896,7 +902,7 @@ class _SyncedLineRow extends StatelessWidget {
                         IconButton(
                           key: Key('syncedLine_${index}_insertButton'),
                           icon: const Icon(Icons.add_circle_outline, size: 20),
-                          tooltip: 'Chèn dòng sau dòng này',
+                          tooltip: context.translate('ui.lyrics.insert_row_tooltip'),
                           onPressed: disabled ? null : onInsert,
                         ),
                         IconButton(
@@ -906,7 +912,7 @@ class _SyncedLineRow extends StatelessWidget {
                             size: 20,
                             color: Theme.of(context).colorScheme.error,
                           ),
-                          tooltip: 'Xoá dòng này',
+                          tooltip: context.translate('ui.lyrics.delete_row_tooltip'),
                           onPressed: disabled ? null : onRemove,
                         ),
                       ],
@@ -915,14 +921,14 @@ class _SyncedLineRow extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
-                  'Lời dòng ${index + 1}',
+                  context.translate('ui.lyrics.row_label', {'index': index + 1}),
                   style: TextStyle(color: textPrimary),
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 TextFormField(
                   key: Key('syncedLine_${index}_lineText'),
                   controller: line.lineTextController,
-                  decoration: squareDecoration(hintText: 'Nhập lời...'),
+                  decoration: squareDecoration(hintText: context.translate('ui.lyrics.row_hint')),
                   minLines: 2,
                   maxLines: 4,
                   keyboardType: TextInputType.multiline,

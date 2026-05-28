@@ -350,8 +350,7 @@ void main() {
       expect: () => [
         const AlbumOperationInProgress(),
         const AlbumOperationSuccess(
-            message:
-                'Album đã được cập nhật thành công và đã cập nhật danh sách bài hát.'),
+            message: 'Album đã được cập nhật thành công.'),
       ],
     );
 

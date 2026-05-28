@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ondas_web/core/constants/app_constants.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
@@ -77,12 +78,12 @@ class _TagsScreenState extends State<TagsScreen> {
     showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Xác nhận xóa'),
-        content: Text('Bạn có chắc muốn xóa "${tag.name}"?'),
+        title: Text(context.translate('ui.tags.delete_title')),
+        content: Text(context.translate('ui.tags.delete_message', {'name': tag.name})),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Hủy'),
+            child: Text(context.translate('ui.common.cancel')),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -93,7 +94,7 @@ class _TagsScreenState extends State<TagsScreen> {
               Navigator.of(dialogContext).pop();
               context.read<TagBloc>().add(TagDeleteEvent(id: tag.id));
             },
-            child: const Text('Xóa'),
+            child: Text(context.translate('ui.common.delete')),
           ),
         ],
       ),
@@ -107,7 +108,7 @@ class _TagsScreenState extends State<TagsScreen> {
         if (state is TagOperationSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(context.translateErrorCode(state.message)),
               backgroundColor: AppColors.successLight,
             ),
           );
@@ -118,7 +119,7 @@ class _TagsScreenState extends State<TagsScreen> {
               : (state as TagListError).message;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(message),
+              content: Text(context.translateErrorCode(message)),
               backgroundColor: AppColors.errorLight,
             ),
           );
@@ -197,7 +198,7 @@ class _TagsContent extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Tags',
+                        context.translate('ui.tags.title'),
                         style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(
                               color: textPrimary,
@@ -206,7 +207,9 @@ class _TagsContent extends StatelessWidget {
                       ),
                       const SizedBox(height: AppSpacing.xs),
                       Text(
-                        '$totalElements items',
+                        totalElements == 1
+                            ? context.translate('ui.tags.count', {'count': totalElements})
+                            : context.translate('ui.tags.count_plural', {'count': totalElements}),
                         style: TextStyle(color: textSecondary),
                       ),
                     ],
@@ -215,7 +218,7 @@ class _TagsContent extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: onAdd,
                     icon: const Icon(Icons.add, size: 18),
-                    label: const Text('Thêm tag'),
+                    label: Text(context.translate('ui.tags.add')),
                   ),
                 ],
               ),
@@ -228,7 +231,7 @@ class _TagsContent extends StatelessWidget {
                       controller: searchController,
                       style: TextStyle(fontSize: 14, color: textPrimary),
                       decoration: InputDecoration(
-                        hintText: 'Tìm tag...',
+                        hintText: context.translate('ui.tags.search_hint'),
                         prefixIcon: const Icon(Icons.search, size: 18),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.pill),
@@ -243,12 +246,12 @@ class _TagsContent extends StatelessWidget {
                   ),
                   const SizedBox(width: AppSpacing.md),
                   SegmentedButton<String>(
-                    segments: const [
-                      ButtonSegment(value: 'all', label: Text('All')),
-                      ButtonSegment(value: 'mood', label: Text('Mood')),
-                      ButtonSegment(value: 'theme', label: Text('Theme')),
-                      ButtonSegment(value: 'activity', label: Text('Activity')),
-                      ButtonSegment(value: 'era', label: Text('Era')),
+                    segments: [
+                      ButtonSegment(value: 'all', label: Text(context.translate('ui.tags.type_all'))),
+                      ButtonSegment(value: 'mood', label: Text(context.translate('ui.tags.type_mood'))),
+                      ButtonSegment(value: 'theme', label: Text(context.translate('ui.tags.type_theme'))),
+                      ButtonSegment(value: 'activity', label: Text(context.translate('ui.tags.type_activity'))),
+                      ButtonSegment(value: 'era', label: Text(context.translate('ui.tags.type_era'))),
                     ],
                     selected: {selectedType ?? 'all'},
                     onSelectionChanged: (value) {
@@ -279,7 +282,15 @@ class _TagsContent extends StatelessWidget {
                           ? () => onPageChanged(currentPage - 1)
                           : null,
                     ),
-                    Text('Trang ${currentPage + 1} / $totalPages'),
+                    Text(
+                      context.translate(
+                        'ui.pagination.page',
+                        {
+                          'current': currentPage + 1,
+                          'total': totalPages,
+                        },
+                      ),
+                    ),
                     IconButton(
                       icon: const Icon(Icons.chevron_right),
                       onPressed: currentPage < totalPages - 1

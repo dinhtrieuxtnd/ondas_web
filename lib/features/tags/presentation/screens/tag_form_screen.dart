@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
 import 'package:ondas_web/features/tags/presentation/bloc/tag_bloc.dart';
@@ -60,7 +61,7 @@ class _TagFormScreenState extends State<TagFormScreen> {
         if (state is TagOperationSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(context.translateErrorCode(state.message)),
               backgroundColor: AppColors.successLight,
             ),
           );
@@ -68,7 +69,7 @@ class _TagFormScreenState extends State<TagFormScreen> {
         } else if (state is TagOperationError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(context.translateErrorCode(state.message)),
               backgroundColor: AppColors.errorLight,
             ),
           );
@@ -96,7 +97,9 @@ class _TagFormScreenState extends State<TagFormScreen> {
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       Text(
-                        widget.isEditing ? 'Sửa tag' : 'Thêm tag',
+                        widget.isEditing
+                            ? context.translate('ui.tags.edit')
+                            : context.translate('ui.tags.create'),
                         style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(
                               color: textPrimary,

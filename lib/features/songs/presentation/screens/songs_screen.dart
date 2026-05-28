@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ondas_web/core/constants/app_constants.dart';
+import 'package:ondas_web/core/localization/localization_extensions.dart';
 import 'package:ondas_web/core/theme/app_colors.dart';
 import 'package:ondas_web/core/theme/app_radius.dart';
 import 'package:ondas_web/core/theme/app_spacing.dart';
@@ -97,7 +98,7 @@ class _SongsScreenState extends State<SongsScreen> {
         if (state is SongOperationSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(context.translateErrorCode(state.message)),
               backgroundColor: AppColors.successLight,
             ),
           );
@@ -105,7 +106,7 @@ class _SongsScreenState extends State<SongsScreen> {
         } else if (state is SongOperationError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(context.translateErrorCode(state.message)),
               backgroundColor: AppColors.errorLight,
             ),
           );
@@ -176,7 +177,7 @@ class _SongsContent extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            'Bài hát',
+                            context.translate('ui.songs.title'),
                             style: Theme.of(context)
                                 .textTheme
                                 .headlineSmall
@@ -216,8 +217,10 @@ class _SongsContent extends StatelessWidget {
                       const SizedBox(height: AppSpacing.xxs),
                       Text(
                         totalElements == 0
-                            ? 'Chưa có bài hát nào'
-                            : '$totalElements bài hát trong thư viện',
+                            ? context.translate('ui.songs.empty')
+                            : (totalElements == 1
+                                ? context.translate('ui.songs.count_single', {'count': totalElements})
+                                : context.translate('ui.songs.count_plural', {'count': totalElements})),
                         style: TextStyle(fontSize: 13, color: textSecondary),
                       ),
                     ],
@@ -227,7 +230,7 @@ class _SongsContent extends StatelessWidget {
                     key: const Key('songsScreen_addButton'),
                     onPressed: onAdd,
                     icon: const Icon(Icons.add, size: 18),
-                    label: const Text('Thêm bài hát'),
+                    label: Text(context.translate('ui.songs.add')),
                   ),
                 ],
               ),
@@ -239,7 +242,7 @@ class _SongsContent extends StatelessWidget {
                   controller: searchController,
                   style: TextStyle(fontSize: 14, color: textPrimary),
                   decoration: InputDecoration(
-                    hintText: 'Tìm kiếm bài hát...',
+                    hintText: context.translate('ui.songs.search_hint'),
                     prefixIcon: const Icon(Icons.search, size: 18),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppRadius.pill),
@@ -323,7 +326,13 @@ class _PaginationBar extends StatelessWidget {
             border: Border.all(color: borderColor),
           ),
           child: Text(
-            'Trang ${currentPage + 1} / $totalPages',
+            context.translate(
+              'ui.pagination.page',
+              {
+                'current': currentPage + 1,
+                'total': totalPages,
+              },
+            ),
             style: TextStyle(fontSize: 13, color: textSecondary),
           ),
         ),
@@ -352,13 +361,15 @@ class _DeleteConfirmDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Xác nhận xóa'),
-      content: Text('Bạn có chắc muốn xóa bài hát "$songTitle"?'),
+      title: Text(context.translate('ui.songs.delete_title')),
+      content: Text(
+        context.translate('ui.songs.delete_message', {'title': songTitle}),
+      ),
       actions: [
         TextButton(
           key: const Key('deleteDialog_cancelButton'),
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Hủy'),
+          child: Text(context.translate('ui.common.cancel')),
         ),
         ElevatedButton(
           key: const Key('deleteDialog_confirmButton'),
@@ -370,7 +381,7 @@ class _DeleteConfirmDialog extends StatelessWidget {
             Navigator.of(context).pop();
             onConfirm();
           },
-          child: const Text('Xóa'),
+          child: Text(context.translate('ui.common.delete')),
         ),
       ],
     );
